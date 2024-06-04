@@ -22,6 +22,7 @@ RUN go build -v -o /usr/local/bin/$PROJECT
 
 # USER $PROJECT
 
+# TODO: test if works from external docker hub too
 FROM alpine
 
 ARG EXECUTABLE="hello-world-docker-go-action"
