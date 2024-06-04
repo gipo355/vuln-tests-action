@@ -1,2 +1,2 @@
 docker-build:
-	@docker buildx build -t go-action -f Dockerfile . --load 
+	@docker buildx build -t halamert/hello-world-docker-go-action -f Dockerfile . --load 

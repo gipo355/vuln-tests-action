@@ -1,4 +1,4 @@
-FROM golang:1-alpine
+FROM golang:1-alpine as BUILDER
 
 ARG EXECUTABLE="hello-world-docker-go-action"
 ENV PROJECT=${EXECUTABLE}
@@ -18,6 +18,18 @@ WORKDIR /home/$PROJECT
 RUN go mod download && go mod verify
 
 RUN go build -v -o /usr/local/bin/$PROJECT
+
+USER $PROJECT
+
+FROM alpine
+
+ARG EXECUTABLE="hello-world-docker-go-action"
+ENV PROJECT=${EXECUTABLE}
+
+COPY --from=BUILDER /usr/local/bin/hello-world-docker-go-action /usr/local/bin/hello-world-docker-go-action
+
+RUN addgroup --system $PROJECT && \
+    adduser --system -G $PROJECT $PROJECT
 
 USER $PROJECT
 
