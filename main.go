@@ -28,13 +28,15 @@ func main() {
 	ls("..")
 	println("ls /")
 	ls("/")
-	println("ls $HOME")
-	ls(os.Getenv("HOME"))
+	// println("ls $HOME")
+	// ls(os.Getenv("HOME"))
 	println("ls $GITHUB_WORKSPACE")
 	ls(os.Getenv("GITHUB_WORKSPACE"))
+	// /github/home
+
 	// RUNNER_WORKSPACE
-	println("ls $RUNNER_WORKSPACE")
-	ls(os.Getenv("RUNNER_WORKSPACE"))
+	// println("ls $RUNNER_WORKSPACE")
+	// ls(os.Getenv("RUNNER_WORKSPACE"))
 	printPwd()
 	printEnv()
 	printFile(githubOutput)
