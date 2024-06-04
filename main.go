@@ -11,15 +11,23 @@ func main() {
 	// get args
 	args := os.Args[1:]
 	if len(args) == 0 {
-		log.Fatal("No args provided")
+		log.Printf("No args provided")
 	}
-
-	name := args[0]
 
 	// https://stackoverflow.com/questions/71357973/github-actions-set-two-output-names-from-custom-action-in-golang-code
 	githubOutput := os.Getenv("GITHUB_OUTPUT")
 	log.Printf("GITHUB_OUTPUT: %v", githubOutput)
 
+	printTime()
+	printHello(args)
+}
+
+func printHello(args []string) {
+	name := args[0]
+	log.Printf("Hello, %v!", name)
+}
+
+func printTime() {
 	// date := currentTime.Now().Format("2006-01-02 15:04:05")
 	currentTime := time.Now().Format("15:04:05")
 	// newEnv := fmt.Sprintf("\ndate=%s", date)
@@ -59,6 +67,4 @@ func main() {
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
-
-	log.Printf("Hello, %v!", name)
 }
