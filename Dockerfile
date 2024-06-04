@@ -1,4 +1,4 @@
-FROM golang:1-alpine as BUILDER
+FROM golang:1-alpine
 
 ARG EXECUTABLE="hello-world-docker-go-action"
 ENV PROJECT=${EXECUTABLE}
@@ -7,11 +7,8 @@ COPY . $GITHUB_WORKSPACE
 
 RUN go mod download && go mod verify
 
-RUN go build -v -o /bin/$PROJECT main.go
+RUN go build -v -o /usr/local/bin/$PROJECT
 
 USER $PROJECT
 
-ENTRYPOINT ["sh", "-c", "\"$GITHUB_WORKSPACE\"/bin/\"$PROJECT\" \"$@\"", "--"]
-
-
-# CMD ["sh", "-c", "${PROJECT}"]
+ENTRYPOINT ["sh", "-c", \"$PROJECT\" \"$@\"", "--"]
