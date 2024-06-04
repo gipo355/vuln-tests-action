@@ -39,9 +39,9 @@ func main() {
 	// ls(os.Getenv("RUNNER_WORKSPACE"))
 	printPwd()
 	printEnv()
-	printFile(githubOutput)
+	printFileContent(githubOutput)
 	appendFile(githubOutput, fmt.Sprintf("arg=%v", args[0]))
-	printFile(githubOutput)
+	printFileContent(githubOutput)
 }
 
 func printHello(args []string) {
@@ -86,19 +86,13 @@ func ls(path string) {
 	}
 }
 
-func printFile(path string) {
-	file, err := os.Open(path)
+func printFileContent(path string) {
+	buf, err := os.ReadFile(path)
 	if err != nil {
-		log.Panic(err)
-	}
-	defer file.Close()
-
-	fi, err := file.Stat()
-	if err != nil {
-		log.Panic(err)
+		log.Fatal(err)
 	}
 
-	log.Printf("File: %v", fi.Name())
+	println(string(buf))
 }
 
 func printTime() {
