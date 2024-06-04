@@ -7,14 +7,14 @@ ENV PROJECT=${EXECUTABLE}
 # RUN addgroup --system $PROJECT && \
 #     adduser --system -G $PROJECT $PROJECT
 #
-# RUN mkdir -p /home/$PROJECT
+RUN mkdir -p /$PROJECT
 
-# COPY . /home/$PROJECT
-COPY . /app
+COPY . /$PROJECT
+# COPY . /app
 
 # RUN chown -R $PROJECT:$PROJECT /home/$PROJECT
 
-WORKDIR /home/$PROJECT
+WORKDIR /$PROJECT
 
 RUN go mod download && go mod verify
 
