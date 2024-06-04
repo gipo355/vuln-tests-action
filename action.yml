@@ -14,6 +14,7 @@ runs:
   # image: "Dockerfile"
   # in registry.
   # image: "docker://halamert/hello-world-docker-go-action:latest"
-  image: "docker://docker.io/halamert/hello-world-docker-go-action"
+  # image: "docker://docker.io/halamert/hello-world-docker-go-action"
+  image: "docker://hello-world-docker-go-action"
   args:
     - ${{ inputs.who-to-greet }}
