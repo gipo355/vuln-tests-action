@@ -10,6 +10,9 @@ outputs:
     description: "The time we greeted you"
 runs:
   using: "docker"
-  image: "halamert/hello-world-docker-go-action:latest"
+  # in repo
+  # image: "Dockerfile"
+  # in registry
+  image: "docker://halamert/hello-world-docker-go-action:latest"
   args:
     - ${{ inputs.who-to-greet }}
