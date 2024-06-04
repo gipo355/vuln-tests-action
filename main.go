@@ -33,8 +33,8 @@ func main() {
 	// fmt.Print("\n")
 	// fmt.Printf(`::set-output name=ecr_tag::%s`, "v"+value)
 	// fmt.Print("\n")
-	fmt.Printf(`::set-output name=time::%s`, currentTime)
-	fmt.Print("\n")
+	// fmt.Printf(`::set-output name=time::%s`, currentTime)
+	// fmt.Print("\n")
 
 	// DEPRECATED ::set-output
 	// must use echo
