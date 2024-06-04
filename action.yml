@@ -13,8 +13,26 @@ runs:
   # in repo
   # image: "Dockerfile"
   # in registry.
-  # image: "docker://halamert/hello-world-docker-go-action:latest"
+  image: "docker://halamert/hello-world-docker-go-action:latest"
   # image: "docker://docker.io/halamert/hello-world-docker-go-action"
-  image: "docker://hello-world-docker-go-action"
+  # image: "docker://hello-world-docker-go-action"
   args:
     - ${{ inputs.who-to-greet }}
+#
+# example
+#     name: "Semgrep Action"
+# author: "r2c"
+# description: "Easily detect and prevent bugs and anti-patterns in your codebase"
+# runs:
+#   using: "docker"
+#   image: "docker://returntocorp/semgrep-agent:v1"
+# inputs:
+#   config:
+#     description: |
+#       Rules and patterns to search for with semgrep.
+#   publishToken:
+#     description: |
+#       Access token to post results to the semgrep app.
+# branding:
+#   icon: "align-left"
+#   color: "gray-dark"
