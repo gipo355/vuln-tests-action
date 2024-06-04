@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
 	"time"
 )
 
@@ -33,8 +32,10 @@ func main() {
 	// fmt.Print("\n")
 	// fmt.Printf(`::set-output name=ecr_tag::%s`, "v"+value)
 	// fmt.Print("\n")
-	// fmt.Printf(`::set-output name=time::%s`, currentTime)
-	// fmt.Print("\n")
+
+	// WARN: deprecated
+	fmt.Printf(`::set-output name=time::%s`, currentTime)
+	fmt.Print("\n")
 
 	// DEPRECATED ::set-output
 	// must use echo
@@ -44,14 +45,20 @@ func main() {
 	// - name: Set output
 	// run: echo "{name}={value}" >> $GITHUB_OUTPUT
 
-	shCmd := fmt.Sprintf("'echo time=%s'", currentTime)
-	cmd := exec.Command("sh", "-c", shCmd, ">>", githubOutput)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
-	if err != nil {
-		log.Fatal(err)
-	}
+	// https://github.com/orgs/community/discussions/38570
+
+	// must write to external file under $GITHUB_OUTPUT
+
+	// https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter
+
+	// shCmd := fmt.Sprintf("'echo time=%s'", currentTime)
+	// cmd := exec.Command("sh", "-c", shCmd, ">>", githubOutput)
+	// cmd.Stdout = os.Stdout
+	// cmd.Stderr = os.Stderr
+	// err := cmd.Run()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	log.Printf("Hello, %v!", name)
 }
