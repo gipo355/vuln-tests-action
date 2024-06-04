@@ -12,7 +12,7 @@ runs:
   using: "docker"
   # in repo
   # image: "Dockerfile"
-  # in registry
+  # in registry.
   image: "docker://halamert/hello-world-docker-go-action:latest"
   args:
     - ${{ inputs.who-to-greet }}
