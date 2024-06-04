@@ -20,7 +20,8 @@ func main() {
 	githubOutput := os.Getenv("GITHUB_OUTPUT")
 	log.Printf("GITHUB_OUTPUT: %v", githubOutput)
 
-	date := time.Now().Format("2006-01-02 15:04:05")
+	// date := currentTime.Now().Format("2006-01-02 15:04:05")
+	currentTime := time.Now().Format("15:04:05")
 	// newEnv := fmt.Sprintf("\ndate=%s", date)
 	// newGithubOutput := githubOutput + newEnv
 	// os.Setenv("GITHUB_OUTPUT", newGithubOutput)
@@ -29,7 +30,7 @@ func main() {
 	// fmt.Print("\n")
 	// fmt.Printf(`::set-output name=ecr_tag::%s`, "v"+value)
 	// fmt.Print("\n")
-	fmt.Printf(`::set-output date=%s`, date)
+	fmt.Printf(`::set-output name=time::%s`, currentTime)
 	fmt.Print("\n")
 
 	log.Printf("Hello, %v!", name)
