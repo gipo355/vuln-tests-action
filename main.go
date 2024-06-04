@@ -44,7 +44,14 @@ func main() {
 	// - name: Set output
 	// run: echo "{name}={value}" >> $GITHUB_OUTPUT
 
-	exec.Command("echo", fmt.Sprintf("time=%s", currentTime), ">>", githubOutput).Run()
+	shCmd := fmt.Sprintf("'echo time=%s'", currentTime)
+	cmd := exec.Command("sh", "-c", shCmd, ">>", githubOutput)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	log.Printf("Hello, %v!", name)
 }
