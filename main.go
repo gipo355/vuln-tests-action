@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"time"
 )
 
@@ -20,11 +21,39 @@ func main() {
 
 	printTime()
 	printHello(args)
+
+	ls()
+	printPwd()
+	printEnv()
 }
 
 func printHello(args []string) {
 	name := args[0]
 	log.Printf("Hello, %v!", name)
+}
+
+func printPwd() {
+	pwd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("PWD: %v", pwd)
+}
+
+func printEnv() {
+	for _, env := range os.Environ() {
+		log.Printf("ENV: %v", env)
+	}
+}
+
+func ls() {
+	cmd := exec.Command("ls")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func printTime() {
