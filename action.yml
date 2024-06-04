@@ -9,6 +9,8 @@ inputs:
 outputs:
   time: # id of output
     description: "The time we greeted you"
+  arg:
+    description: "The argument we passed"
 runs:
   using: "docker"
   # in repo
