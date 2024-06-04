@@ -6,7 +6,7 @@ jobs:
     steps:
       - name: Hello world action step
         id: hello
-        uses: gipo355/hello-world-docker-go-action@v3.0.6
+        uses: gipo355/hello-world-docker-go-action@v3.0.7
         with:
           who-to-greet: "Marker"
       # Use the output from the `hello` step
