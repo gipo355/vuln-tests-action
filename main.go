@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"time"
 )
 
@@ -26,12 +27,24 @@ func main() {
 	// newGithubOutput := githubOutput + newEnv
 	// os.Setenv("GITHUB_OUTPUT", newGithubOutput)
 
+	// https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/
+
 	// fmt.Printf(`::set-output name=repo_tag::%s`, value)
 	// fmt.Print("\n")
 	// fmt.Printf(`::set-output name=ecr_tag::%s`, "v"+value)
 	// fmt.Print("\n")
 	fmt.Printf(`::set-output name=time::%s`, currentTime)
 	fmt.Print("\n")
+
+	// DEPRECATED ::set-output
+	// must use echo
+	// - name: Save state
+	// run: echo "{name}={value}" >> $GITHUB_STATE
+	//
+	// - name: Set output
+	// run: echo "{name}={value}" >> $GITHUB_OUTPUT
+
+	exec.Command("echo", fmt.Sprintf("time=%s", currentTime), ">>", githubOutput).Run()
 
 	log.Printf("Hello, %v!", name)
 }
