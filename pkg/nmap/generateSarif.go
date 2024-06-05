@@ -64,8 +64,8 @@ func ConvertNmapXMLToSarif() error {
 // }
 
 func (n *Client) ConverToJSON() {
-	fileName := "nmap-reports/vulners/nmap-report.xml"
-	fileOutput := "nmap-reports/vulners/nmap-report.json"
+	fileName := "nmap-reports/vulscan/nmap-report.xml"
+	fileOutput := "nmap-reports/vulscan/nmap-report.json"
 	var nmap formatter.NMAPRun
 
 	var config formatter.Config = formatter.Config{}
