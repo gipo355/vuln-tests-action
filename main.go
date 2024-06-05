@@ -191,6 +191,8 @@ func printTime() {
 func simpleNmap() {
 	host := GetInputEnv("HOST")
 
+	// this will execute the nmap, here we need to compose the command based on user input
+	// e.g. use scripts, flags, host, etc
 	cmd := exec.Command("nmap", "-sP", host)
 
 	file, fileErr := os.Create("nmap.log")
