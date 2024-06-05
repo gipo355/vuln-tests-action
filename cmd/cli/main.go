@@ -88,24 +88,26 @@ func main() {
 
 	log.Println("Executing nmap...")
 
-	nmapArgs := []string{"-sP"}
-
 	n := nmap.NewNmapClient(
 		&nmap.Config{
-			Target:      "localhost",
-			WriteToFile: true,
+			Target:        "localhost",
+			WriteToFile:   true,
+			GenerateSarif: false,
+			OutputDir:     "nmap-reports",
 		},
 	)
 
-	// err = n.WriteToFile()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	// Testing
+	// TODO: remove hardcoded args
+	nmapArgs := []string{"-sP"}
 
 	err = n.DirectScan(nmapArgs)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// n.VulnScan()
+	err = n.Vulscan()
+	if err != nil {
+		log.Fatal(err)
+	}
 }

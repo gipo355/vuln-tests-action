@@ -11,28 +11,29 @@ import (
 )
 
 // writeToFile writes the nmap output to a file in the reports directory
-func (n *Client) writeToFile(userArgs []string) error {
+func (n *Client) writeToFile(userArgs []string, dirName string) error {
 	target := n.Config.Target
 
+	mainDir := n.Config.OutputDir
+
 	// TODO: don't hardcode the directory name and the file name
-	dirName := "reports"
 	fileName := "nmap-report"
 
 	args := slices.Concat(userArgs, []string{
-		"-oA",                    // output all formats
-		dirName + "/" + fileName, // output file name
-		target,                   // target
+		"-oA",                                    // output all formats
+		mainDir + "/" + dirName + "/" + fileName, // output file name
+		target,                                   // target
 	})
 
 	cmd := exec.Command("nmap", args...)
 	log.Printf("cmd: %v", cmd)
 
-	err := os.MkdirAll(dirName, 0o755)
+	err := os.MkdirAll(mainDir+"/"+dirName, 0o755)
 	if err != nil {
 		return fmt.Errorf("error creating directory: %w", err)
 	}
 
-	openFile, fileErr := os.Create(dirName + "/nmap-output.log")
+	openFile, fileErr := os.Create(mainDir + "/" + dirName + "/nmap-output.log")
 	if fileErr != nil {
 		return fmt.Errorf("error creating file: %w", fileErr)
 	}
