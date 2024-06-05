@@ -1,26 +1,13 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"io"
 	"log"
 	"os"
-	"os/exec"
 	"time"
+
+	"github.com/gipo355/hello-world-docker-go-action/utils"
 )
-
-func GithubState() string {
-	return os.Getenv("GITHUB_STATE")
-}
-
-func GithubOutput() string {
-	return os.Getenv("GITHUB_OUTPUT")
-}
-
-func GetInputEnv(name string) string {
-	return os.Getenv("INPUT_" + name)
-}
 
 func main() {
 	// get args
@@ -31,7 +18,7 @@ func main() {
 	if len(args) == 0 {
 		log.Printf("No args provided")
 	} else {
-		printHello(args[0])
+		utils.PrintHello(args[0])
 
 		for _, arg := range args {
 			log.Printf("arg: %v", arg)
@@ -43,40 +30,40 @@ func main() {
 	// args to be passed to the action entrypoint must be passed to args in gh action
 
 	// sets output using deprecated method ::set-output
-	// printTime()
+	// utils.PrintTime()
 
 	// https://stackoverflow.com/questions/71357973/github-actions-set-two-output-names-from-custom-action-in-golang-code
-	githubOutput := GithubOutput()
+	githubOutput := utils.GithubOutput()
 	log.Printf("GITHUB_OUTPUT: %v", githubOutput)
 
 	home := os.Getenv("HOME")
 	githubWorkspace := os.Getenv("GITHUB_WORKSPACE")
 
 	log.Println("ls .")
-	ls(".")
+	utils.Ls(".")
 
 	log.Println("ls ..")
-	ls("..")
+	utils.Ls("..")
 
 	log.Println("ls /")
-	ls("/")
+	utils.Ls("/")
 
 	if home != "" {
 		log.Println("ls $HOME")
-		ls(os.Getenv("HOME"))
+		utils.Ls(os.Getenv("HOME"))
 	}
 
 	if githubWorkspace != "" {
 		log.Println("ls $GITHUB_WORKSPACE")
-		ls(os.Getenv("GITHUB_WORKSPACE"))
+		utils.Ls(os.Getenv("GITHUB_WORKSPACE"))
 
-		printFileContent(githubOutput)
+		utils.PrintFileContent(githubOutput)
 
-		appendToFile(githubOutput, fmt.Sprintf("time=%v\n", time.Now().Format("15:04:05")))
+		utils.AppendToFile(githubOutput, fmt.Sprintf("time=%v\n", time.Now().Format("15:04:05")))
 
-		appendToFile(githubOutput, fmt.Sprintf("arg=%v", args[0]))
+		utils.AppendToFile(githubOutput, fmt.Sprintf("arg=%v", args[0]))
 
-		printFileContent(githubOutput)
+		utils.PrintFileContent(githubOutput)
 	}
 
 	// doesn't exist
@@ -84,187 +71,12 @@ func main() {
 	// ls(os.Getenv("RUNNER_WORKSPACE"))
 
 	log.Println("print pwd")
-	printPwd()
+	utils.PrintPwd()
 
 	log.Println("print env")
-	printEnv()
+	utils.PrintEnv()
 
 	log.Println("Executing nmap...")
-	// simpleNmap()
-	simpleNmapStream()
-}
-
-func printHello(arg string) {
-	name := arg
-
-	log.Printf("Hello, %v!", name)
-}
-
-func appendToFile(path, content string) {
-	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0o644)
-	if err != nil {
-		log.Panic(err)
-	}
-	defer file.Close()
-
-	_, err = file.WriteString(content)
-	if err != nil {
-		log.Panic(err)
-	}
-}
-
-func printPwd() {
-	pwd, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Printf("PWD: %v", pwd)
-}
-
-func printEnv() {
-	for _, env := range os.Environ() {
-		log.Printf("ENV: %v", env)
-	}
-}
-
-func ls(path string) {
-	cmd := exec.Command("ls", "-la", path)
-
-	cmd.Stdout = os.Stdout
-
-	cmd.Stderr = os.Stderr
-
-	if err := cmd.Run(); err != nil {
-		log.Fatal(err)
-	}
-}
-
-func printFileContent(path string) {
-	buf, err := os.ReadFile(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	println(string(buf))
-}
-
-func printTime() {
-	// date := currentTime.Now().Format("2006-01-02 15:04:05")
-	currentTime := time.Now().Format("15:04:05")
-	// newEnv := fmt.Sprintf("\ndate=%s", date)
-	// newGithubOutput := githubOutput + newEnv
-	// os.Setenv("GITHUB_OUTPUT", newGithubOutput)
-
-	// https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/
-
-	// fmt.Printf(`::set-output name=repo_tag::%s`, value)
-	// fmt.Print("\n")
-	// fmt.Printf(`::set-output name=ecr_tag::%s`, "v"+value)
-	// fmt.Print("\n")
-
-	// WARN: deprecated
-	fmt.Printf(`::set-output name=time::%s`, currentTime)
-
-	fmt.Print("\n")
-
-	// DEPRECATED ::set-output
-	// must use echo
-	// - name: Save state
-	// run: echo "{name}={value}" >> $GITHUB_STATE
-	//
-	// - name: Set output
-	// run: echo "{name}={value}" >> $GITHUB_OUTPUT
-
-	// https://github.com/orgs/community/discussions/38570
-
-	// must write to external file under $GITHUB_OUTPUT
-
-	// https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-output-parameter
-
-	// shCmd := fmt.Sprintf("'echo time=%s'", currentTime)
-	// cmd := exec.Command("sh", "-c", shCmd, ">>", githubOutput)
-	// cmd.Stdout = os.Stdout
-	// cmd.Stderr = os.Stderr
-	// err := cmd.Run()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-}
-
-func simpleNmap() {
-	host := GetInputEnv("HOST")
-
-	// this will execute the nmap, here we need to compose the command based on user input
-	// e.g. use scripts, flags, host, etc
-	cmd := exec.Command("nmap", "-sP", host)
-
-	file, fileErr := os.Create("nmap.log")
-	if fileErr != nil {
-		log.Panic(fileErr)
-	}
-	defer file.Close()
-
-	// this is a writer, we want to write to a file with bufio
-	// cmd.Stdout = os.Stdout
-	cmd.Stdout = file
-
-	cmd.Stderr = os.Stderr
-
-	if cmdErr := cmd.Run(); cmdErr != nil {
-		log.Panic(cmdErr)
-	}
-}
-
-func simpleNmapStream() {
-	host := GetInputEnv("HOST")
-
-	// this will execute the nmap, here we need to compose the command based on user input
-	// e.g. use scripts, flags, host, etc
-	cmd := exec.Command("nmap", "-sP", host)
-
-	file, fileErr := os.Create("nmap.log")
-	if fileErr != nil {
-		log.Panic(fileErr)
-	}
-	defer file.Close()
-
-	writer := bufio.NewWriter(file)
-	defer writer.Flush()
-
-	// create a pipe to capture stdout and stderr
-	stdout, outPipeErr := cmd.StdoutPipe()
-	if outPipeErr != nil {
-		log.Panic(outPipeErr)
-	}
-
-	stderr, errPipeErr := cmd.StderrPipe()
-	if errPipeErr != nil {
-		log.Panic(errPipeErr)
-	}
-
-	// start the command
-	if cmdErr := cmd.Start(); cmdErr != nil {
-		log.Panic(cmdErr)
-	}
-
-	// create a goroutine to copy the stdout in a stream
-	go func() {
-		_, copyStdoutErr := io.Copy(writer, stdout)
-		if copyStdoutErr != nil {
-			log.Panic(copyStdoutErr)
-		}
-	}()
-
-	// create a goroutine to copy the stderr in a stream
-	go func() {
-		_, copyStderrErr := io.Copy(os.Stderr, stderr)
-		if copyStderrErr != nil {
-			log.Panic(copyStderrErr)
-		}
-	}()
-
-	// wait for the command to finish
-	if err := cmd.Wait(); err != nil {
-		log.Panic(err)
-	}
+	// utils.SimpleNmap()
+	utils.SimpleNmapStream()
 }
