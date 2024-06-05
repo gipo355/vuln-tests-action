@@ -22,7 +22,9 @@ func main() {
 	if len(args) == 0 {
 		log.Panic("No args provided")
 	}
-	log.Printf("args: %v", args)
+	for _, arg := range args {
+		log.Printf("arg: %v", arg)
+	}
 
 	// https://stackoverflow.com/questions/71357973/github-actions-set-two-output-names-from-custom-action-in-golang-code
 	githubOutput := GithubOutput()
