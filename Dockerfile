@@ -8,6 +8,15 @@ ENV PROJECT=${EXECUTABLE}
 
 RUN mkdir -p /$PROJECT
 
+
+# vulnscan scripts for nmap
+# https://securitytrails.com/blog/nmap-vulnerability-scan
+RUN git clone https://github.com/scipag/vulscan /scipag_vulscan
+# RUN ln -s /scipag_vulscan /usr/share/nmap/scripts/vulscan
+
+# RUN cd /usr/share/nmap/scripts/
+RUN git clone https://github.com/vulnersCom/nmap-vulners.git /nmap-vulners
+
 COPY . /$PROJECT
 
 WORKDIR /$PROJECT
@@ -28,5 +37,7 @@ ENV PROJECT=${EXECUTABLE}
 RUN apk update && apk add nmap && rm -rf /var/cache/apk/*
 
 COPY --from=BUILDER /${PROJECT}/${PROJECT} /usr/local/bin/${PROJECT}
+COPY --from=BUILDER /scipag_vulscan /usr/share/nmap/scripts/vulscan
+COPY --from=BUILDER /nmap-vulners /usr/share/nmap/scripts/nmap-vulners
 
 ENTRYPOINT ["sh", "-c", "\"$PROJECT\" \"$@\"", "--"]
