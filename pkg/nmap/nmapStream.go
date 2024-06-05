@@ -1,4 +1,4 @@
-package utils
+package nmap
 
 import (
 	"bufio"
@@ -6,10 +6,12 @@ import (
 	"log"
 	"os"
 	"os/exec"
+
+	"github.com/gipo355/hello-world-docker-go-action/pkg/github"
 )
 
 func SimpleNmapStream() {
-	host := GetInputEnv("HOST")
+	host := github.GetInputEnv("HOST")
 
 	// this will execute the nmap, here we need to compose the command based on user input
 	// e.g. use scripts, flags, host, etc

@@ -27,3 +27,13 @@ we are using a docker container which allows us to pull and prepare needed tools
 if we were to use a js action, we would have to install nmap on the runner machine which is not ideal.
 
 golang provides efficient concurrency and minimal image + mem size for containers using alpine.
+
+# todo
+
+- add licenses
+- fork vulner repo
+- copy vulner scripts in continer
+- add more nmap options
+- create auto release and docker publish on tag
+- generate sarif report
+- add cobra and viper

@@ -6,7 +6,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/gipo355/hello-world-docker-go-action/utils"
+	"github.com/gipo355/hello-world-docker-go-action/pkg/github"
+	"github.com/gipo355/hello-world-docker-go-action/pkg/nmap"
+	"github.com/gipo355/hello-world-docker-go-action/pkg/utils"
 )
 
 func main() {
@@ -33,29 +35,29 @@ func main() {
 	// utils.PrintTime()
 
 	// https://stackoverflow.com/questions/71357973/github-actions-set-two-output-names-from-custom-action-in-golang-code
-	githubOutput := utils.GithubOutput()
+	githubOutput := github.GetOutputPath()
 	log.Printf("GITHUB_OUTPUT: %v", githubOutput)
 
 	home := os.Getenv("HOME")
 	githubWorkspace := os.Getenv("GITHUB_WORKSPACE")
 
 	log.Println("ls .")
-	utils.Ls(".")
+	utils.ListFolderContent(".")
 
 	log.Println("ls ..")
-	utils.Ls("..")
+	utils.ListFolderContent("..")
 
 	log.Println("ls /")
-	utils.Ls("/")
+	utils.ListFolderContent("/")
 
 	if home != "" {
 		log.Println("ls $HOME")
-		utils.Ls(os.Getenv("HOME"))
+		utils.ListFolderContent(os.Getenv("HOME"))
 	}
 
 	if githubWorkspace != "" {
 		log.Println("ls $GITHUB_WORKSPACE")
-		utils.Ls(os.Getenv("GITHUB_WORKSPACE"))
+		utils.ListFolderContent(os.Getenv("GITHUB_WORKSPACE"))
 
 		utils.PrintFileContent(githubOutput)
 
@@ -74,9 +76,13 @@ func main() {
 	utils.PrintPwd()
 
 	log.Println("print env")
-	utils.PrintEnv()
+	utils.PrintEnvVars()
 
 	log.Println("Executing nmap...")
+
+	// nmap section
+
 	// utils.SimpleNmap()
-	utils.SimpleNmapStream()
+
+	nmap.SimpleNmapStream()
 }

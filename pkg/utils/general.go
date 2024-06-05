@@ -6,18 +6,6 @@ import (
 	"os/exec"
 )
 
-func GithubState() string {
-	return os.Getenv("GITHUB_STATE")
-}
-
-func GithubOutput() string {
-	return os.Getenv("GITHUB_OUTPUT")
-}
-
-func GetInputEnv(name string) string {
-	return os.Getenv("INPUT_" + name)
-}
-
 func PrintHello(arg string) {
 	name := arg
 
@@ -45,13 +33,13 @@ func PrintPwd() {
 	log.Printf("PWD: %v", pwd)
 }
 
-func PrintEnv() {
+func PrintEnvVars() {
 	for _, env := range os.Environ() {
 		log.Printf("ENV: %v", env)
 	}
 }
 
-func Ls(path string) {
+func ListFolderContent(path string) {
 	cmd := exec.Command("ls", "-la", path)
 
 	cmd.Stdout = os.Stdout
