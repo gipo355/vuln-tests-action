@@ -9,6 +9,7 @@ ENV PROJECT=${EXECUTABLE}
 RUN mkdir -p /$PROJECT
 
 
+# TODO: fork repo to pin
 # vulnscan scripts for nmap
 # https://securitytrails.com/blog/nmap-vulnerability-scan
 RUN git clone https://github.com/scipag/vulscan /scipag_vulscan
