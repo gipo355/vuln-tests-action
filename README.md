@@ -40,3 +40,5 @@ golang provides efficient concurrency and minimal image + mem size for container
 - split github utils in its own lib
 - understand golang versioning forlib
 - split smiattack cli with nmap in its own repo for action using the github lib and utils
+
+- make a list of all go libs and tools
