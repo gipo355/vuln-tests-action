@@ -58,3 +58,11 @@ cli nmap repo
 utils repo
 
 - provides github utils like getRepo, getIssue, etc
+
+# libs
+
+nmap formatter already available
+<https://github.com/vdjagilev/nmap-formatter/wiki/Use-as-a-library>
+<https://github.com/vdjagilev/nmap-formatter>
+
+<https://gist.github.com/PSJoshi/1ddb53b42a1b099355df9eac86ced222>
