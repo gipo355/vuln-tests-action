@@ -1,9 +1,7 @@
 package nmap
 
 import (
-	"bufio"
 	"encoding/xml"
-	"fmt"
 	"os"
 
 	"github.com/vdjagilev/nmap-formatter/v3/formatter"
@@ -38,42 +36,44 @@ func ConvertNmapXMLToSarif() error {
 }
 
 // try parsing nmap-reports/vulscan/nmap-report.xml
-func (n *Client) ReadXML(scan string) error {
-	outdir := n.Config.OutputDir
-	var filePath string
-	if scan == "vulscan" {
-		filePath = fmt.Sprintf("%s/nmap-reports/vulscan/nmap-report.xml", outdir)
-	}
-	if scan == "direct" {
-		filePath = fmt.Sprintf("%s/vulners/nmap-report.xml", outdir)
-	}
-	if scan == "vulners" {
-		filePath = fmt.Sprintf("%s/vulners/nmap-report.xml", outdir)
-	}
+// func (n *Client) ReadXML(scan string) error {
+// 	outdir := n.Config.OutputDir
+// 	var filePath string
+// 	if scan == "vulscan" {
+// 		filePath = fmt.Sprintf("%s/nmap-reports/vulscan/nmap-report.xml", outdir)
+// 	}
+// 	if scan == "direct" {
+// 		filePath = fmt.Sprintf("%s/vulners/nmap-report.xml", outdir)
+// 	}
+// 	if scan == "vulners" {
+// 		filePath = fmt.Sprintf("%s/vulners/nmap-report.xml", outdir)
+// 	}
+//
+// 	file, err := os.Open(filePath)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	defer file.Close()
+//
+// 	reader := bufio.NewReader(file)
+//
+// 	// parse reports/nmap-report.xml using xml.Decoder
+// 	decoder := xml.NewDecoder(reader)
+//
+// 	return nil
+// }
 
-	file, err := os.Open(filePath)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	reader := bufio.NewReader(file)
-
-	// parse reports/nmap-report.xml using xml.Decoder
-	decoder := xml.NewDecoder(reader)
-
-	return nil
-}
-
-func (n *Client) ConverToJson() {
+func (n *Client) ConverToJSON() {
 	var nmap formatter.NMAPRun
+
 	var config formatter.Config = formatter.Config{}
 
 	// Read XML file that was produced by nmap (with -oX option)
-	content, err := os.ReadFile("example.xml")
+	content, err := os.ReadFile("nmap-reports/direct/nmap-report.xml")
 	if err != nil {
 		panic(err)
 	}
+
 	// Unmarshal XML and map structure(s) fields accordingly
 	if err = xml.Unmarshal(content, &nmap); err != nil {
 		panic(err)
@@ -82,7 +82,12 @@ func (n *Client) ConverToJson() {
 	// Output data to console stdout
 	// You can use any other io.Writer implementation
 	// for example: os.OpenFile("file.json", os.O_CREATE|os.O_EXCL|os.O_WRONLY, os.ModePerm)
-	config.Writer = os.Stdout
+	// config.Writer = os.Stdout
+	outputFile, err := os.Create("nmap-reports/direct/nmap-report.json")
+	if err != nil {
+		panic(err)
+	}
+	config.Writer = outputFile
 	// Formatting data to JSON, you can use:
 	// CSVOutput, MarkdownOutput, HTMLOutput as well
 	config.OutputFormat = formatter.JSONOutput

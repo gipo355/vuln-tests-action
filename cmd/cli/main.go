@@ -83,18 +83,18 @@ func main() {
 
 	channels := []chan error{
 		make(chan error),
-		make(chan error),
-		make(chan error),
+		// make(chan error),
+		// make(chan error),
 	}
 
 	// directChan := make(chan error)
 	go n.DirectScan(nmapArgs, channels[0])
 
 	// vulscanChan := make(chan error)
-	go n.ScanWithVulscan(channels[1])
+	// go n.ScanWithVulscan(channels[1])
 
 	// vulnerChan := make(chan error)
-	go n.ScanWithVulners(channels[2])
+	// go n.ScanWithVulners(channels[2])
 
 	// for i := 0; i < 3; i++ {
 	for i := 0; i < len(channels); i++ {
@@ -106,19 +106,23 @@ func main() {
 			}
 			log.Println("direct scan finished")
 
-		case vulnerErr := <-channels[1]:
-			if vulnerErr != nil {
-				log.Panic(fmt.Errorf("error scanning with vulners: %w", vulnerErr))
-			}
-			log.Println("vulners scan finished")
-
-		case vulscanErr := <-channels[2]:
-			if vulscanErr != nil {
-				log.Panic(fmt.Errorf("error scanning with vulscan: %w", vulscanErr))
-			}
-			log.Println("vulscan scan finished")
+			// case vulnerErr := <-channels[1]:
+			// 	if vulnerErr != nil {
+			// 		log.Panic(fmt.Errorf("error scanning with vulners: %w", vulnerErr))
+			// 	}
+			// 	log.Println("vulners scan finished")
+			//
+			// case vulscanErr := <-channels[2]:
+			// 	if vulscanErr != nil {
+			// 		log.Panic(fmt.Errorf("error scanning with vulscan: %w", vulscanErr))
+			// 	}
+			// 	log.Println("vulscan scan finished")
 		}
 	}
+
+	log.Println("nmap finished")
+
+	n.ConverToJSON()
 
 	for _, ch := range channels {
 		close(ch)
