@@ -1,4 +1,4 @@
-FROM golang:1-alpine as BUILDER
+FROM golang:1.22.4-alpine3.20 as BUILDER
 
 ARG EXECUTABLE="hello-world-docker-go-action"
 ENV PROJECT=${EXECUTABLE}
@@ -23,7 +23,7 @@ RUN go build -v -o /usr/local/bin/$PROJECT
 # USER $PROJECT
 
 # TODO: test if works from external docker hub too
-FROM alpine
+FROM alpine:3.20
 
 ARG EXECUTABLE="hello-world-docker-go-action"
 ENV PROJECT=${EXECUTABLE}
