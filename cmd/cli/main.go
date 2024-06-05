@@ -5,9 +5,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/gipo355/hello-world-docker-go-action/pkg/github"
-	"github.com/gipo355/hello-world-docker-go-action/pkg/nmap"
-	"github.com/gipo355/hello-world-docker-go-action/pkg/utils"
+	"github.com/gipo355/vuln-tests-action/pkg/github"
+	"github.com/gipo355/vuln-tests-action/pkg/nmap"
+	"github.com/gipo355/vuln-tests-action/pkg/utils"
 )
 
 func main() {

@@ -2,10 +2,6 @@ name: "Nmap Action"
 description: "Runs nmap on a target host"
 author: gipo355
 inputs:
-  who-to-greet:
-    description: "Who to greet"
-    required: true
-    default: "World"
   host:
     description: "Host to scan"
     required: false
@@ -22,7 +18,7 @@ inputs:
     description: "Arguments to pass to nmap"
     required: false
     default: "-sV"
-  vulners:
+  run-vulners:
     description: "Use vulners script"
     required: false
     default: "false"
@@ -37,9 +33,9 @@ runs:
   # image: "Dockerfile"
   # in registry.
   # image: "Dockerfile"
-  # image: "docker://docker.io/halamert/hello-world-docker-go-action"
-  image: "docker://halamert/hello-world-docker-go-action:latest"
-  # image: "docker://hello-world-docker-go-action"
+  # image: "docker://docker.io/halamert/vuln-tests-action"
+  image: "docker://gipo355/nmap-go-wrapper:latest"
+  # image: "docker://vuln-tests-action"
   args:
     - ${{ inputs.who-to-greet }}
     - --host ${{ inputs.host }}

@@ -1,3 +1,3 @@
-module github.com/gipo355/hello-world-docker-go-action
+module github.com/gipo355/vuln-tests-action
 
 go 1.22.2

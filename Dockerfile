@@ -1,4 +1,4 @@
-ARG EXECUTABLE="hello-world-docker-go-action"
+ARG EXECUTABLE="vuln-tests-action"
 
 # BASE IMAGE
 FROM golang:1.22.4-bookworm as BUILDER
