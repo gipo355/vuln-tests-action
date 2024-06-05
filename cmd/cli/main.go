@@ -53,50 +53,59 @@ func main() {
 	log.Println("print pwd")
 	utils.PrintPwd()
 
-	log.Println("print env")
-	utils.PrintEnvVars()
-
-	log.Println("Executing nmap...")
+	// log.Println("print env")
+	// utils.PrintEnvVars()
 
 	// TODO: github must move to its own package
 
 	// github section
 	gh, err := github.NewGitHubEnvironment()
-	if err != nil || gh == nil {
-		log.Fatal(err)
-	}
+	if err == nil {
+		// some logging
+		log.Println("github output", gh.GITHUB_OUTPUT)
+		log.Println("github state", gh.GITHUB_STATE)
+		log.Println("github workspace", gh.GITHUB_WORKSPACE)
+		log.Println("home", gh.HOME)
+		log.Println("ls .")
+		utils.ListFolderContent(".")
+		log.Println("ls ..")
+		utils.ListFolderContent("..")
+		log.Println("ls /")
+		utils.ListFolderContent("/")
 
-	// some logging
-	log.Println("github output", gh.GITHUB_OUTPUT)
-	log.Println("github state", gh.GITHUB_STATE)
-	log.Println("github workspace", gh.GITHUB_WORKSPACE)
-	log.Println("home", gh.HOME)
-	log.Println("ls .")
-	utils.ListFolderContent(".")
-	log.Println("ls ..")
-	utils.ListFolderContent("..")
-	log.Println("ls /")
-	utils.ListFolderContent("/")
-
-	err = gh.SetOutput("time", time.Now().Format("15:04:05"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = gh.SetOutput("arg", args[0])
-	if err != nil {
-		log.Fatal(err)
+		err = gh.SetOutput("time", time.Now().Format("15:04:05"))
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = gh.SetOutput("arg", args[0])
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	// TODO: nmap must move to its own package
 	// nmap section
 
-	nmapArgs := []string{"-sV", "-p", "80,443", "-oN", "nmap.log"}
+	log.Println("Executing nmap...")
 
-	// utils.SimpleNmap()
+	nmapArgs := []string{"-sP"}
 
 	n := nmap.NewNmapClient(
-		"localhost",
-		nmapArgs,
+		&nmap.Config{
+			Target:      "localhost",
+			WriteToFile: true,
+		},
 	)
-	n.WriteToFile()
+
+	// err = n.WriteToFile()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	err = n.DirectScan(nmapArgs)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// n.VulnScan()
 }

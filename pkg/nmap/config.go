@@ -1,13 +1,13 @@
 package nmap
 
 type Config struct {
-	Host string
-	Args []string
+	Target      string
+	WriteToFile bool
 }
 
-func NewConfig(host string, args []string) *Config {
+func NewConfig(target string, writeToFile bool) *Config {
 	return &Config{
-		Host: host,
-		Args: args,
+		Target:      target,
+		WriteToFile: writeToFile,
 	}
 }

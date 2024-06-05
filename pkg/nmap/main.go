@@ -4,8 +4,8 @@ type Client struct {
 	Config *Config
 }
 
-func NewNmapClient(host string, args []string) *Client {
+func NewNmapClient(c *Config) *Client {
 	return &Client{
-		Config: NewConfig(host, args),
+		Config: c,
 	}
 }

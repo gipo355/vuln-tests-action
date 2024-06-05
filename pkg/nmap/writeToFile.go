@@ -2,53 +2,70 @@ package nmap
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"log"
 	"os"
 	"os/exec"
-	"strings"
+	"slices"
 )
 
-func (n *Client) WriteToFile() {
-	host := n.Config.Host
+// writeToFile writes the nmap output to a file in the reports directory
+func (n *Client) writeToFile(userArgs []string) error {
+	target := n.Config.Target
 
-	// join args into a single string
-	args := strings.Join(n.Config.Args, " ")
+	// TODO: don't hardcode the directory name and the file name
+	dirName := "reports"
+	fileName := "nmap-report"
 
-	// this will execute the nmap, here we need to compose the command based on user input
-	// e.g. use scripts, flags, host, etc
-	cmd := exec.Command("nmap", args, host)
+	args := slices.Concat(userArgs, []string{
+		"-oA",                    // output all formats
+		dirName + "/" + fileName, // output file name
+		target,                   // target
+	})
 
-	file, fileErr := os.Create("nmap.log")
-	if fileErr != nil {
-		log.Panic(fileErr)
+	cmd := exec.Command("nmap", args...)
+	log.Printf("cmd: %v", cmd)
+
+	err := os.MkdirAll(dirName, 0o755)
+	if err != nil {
+		return fmt.Errorf("error creating directory: %w", err)
 	}
-	defer file.Close()
 
-	writer := bufio.NewWriter(file)
+	openFile, fileErr := os.Create(dirName + "/nmap-output.log")
+	if fileErr != nil {
+		return fmt.Errorf("error creating file: %w", fileErr)
+	}
+	defer openFile.Close()
+
+	writer := bufio.NewWriter(openFile)
 	defer writer.Flush()
 
 	// create a pipe to capture stdout and stderr
 	stdout, outPipeErr := cmd.StdoutPipe()
 	if outPipeErr != nil {
-		log.Panic(outPipeErr)
+		return fmt.Errorf("error creating stdout pipe: %w", outPipeErr)
 	}
 
 	stderr, errPipeErr := cmd.StderrPipe()
 	if errPipeErr != nil {
-		log.Panic(errPipeErr)
+		return fmt.Errorf("error creating stderr pipe: %w", errPipeErr)
 	}
 
 	// start the command
 	if cmdErr := cmd.Start(); cmdErr != nil {
-		log.Panic(cmdErr)
+		return fmt.Errorf("error starting command: %w", cmdErr)
 	}
+
+	// createa a channel to get the output
+	stdErrOutputChan := make(chan []byte)
+	stdOutOutputChan := make(chan []byte)
 
 	// create a goroutine to copy the stdout in a stream
 	go func() {
 		_, copyStdoutErr := io.Copy(writer, stdout)
 		if copyStdoutErr != nil {
-			log.Panic(copyStdoutErr)
+			stdOutOutputChan <- []byte(fmt.Sprintf("Error copying stdout: %s", copyStdoutErr))
 		}
 	}()
 
@@ -56,12 +73,20 @@ func (n *Client) WriteToFile() {
 	go func() {
 		_, copyStderrErr := io.Copy(os.Stderr, stderr)
 		if copyStderrErr != nil {
-			log.Panic(copyStderrErr)
+			stdErrOutputChan <- []byte(fmt.Sprintf("Error copying stderr: %s", copyStderrErr))
 		}
+
+		stdErrOutputChan <- []byte{}
 	}()
+
+	if stdErrOutput := <-stdErrOutputChan; len(stdErrOutput) > 0 {
+		return fmt.Errorf("error copying std: %s", stdErrOutput)
+	}
 
 	// wait for the command to finish
 	if err := cmd.Wait(); err != nil {
-		log.Panic(err)
+		return fmt.Errorf("error waiting for command: %w", err)
 	}
+
+	return nil
 }

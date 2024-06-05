@@ -1,8 +1,7 @@
 package client
 
 type Client interface {
-	Scan() error
-	WriteToFile() error
-	WriteToStdout() error
+	DirectScan() error
 	CreteSarif() error
+	VulnScan() error
 }
