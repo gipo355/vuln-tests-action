@@ -28,6 +28,9 @@ FROM alpine
 ARG EXECUTABLE="hello-world-docker-go-action"
 ENV PROJECT=${EXECUTABLE}
 
+# add nmap
+RUN apk update && apk add nmap && rm -rf /var/cache/apk/*
+
 COPY --from=BUILDER /usr/local/bin/hello-world-docker-go-action /usr/local/bin/hello-world-docker-go-action
 
 # RUN addgroup --system $PROJECT && \

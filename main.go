@@ -12,7 +12,7 @@ func main() {
 	// get args
 	args := os.Args[1:]
 	if len(args) == 0 {
-		log.Printf("No args provided")
+		log.Panic("No args provided")
 	}
 
 	// https://stackoverflow.com/questions/71357973/github-actions-set-two-output-names-from-custom-action-in-golang-code
@@ -20,17 +20,17 @@ func main() {
 	log.Printf("GITHUB_OUTPUT: %v", githubOutput)
 
 	printTime()
-	printHello(args)
+	printHello(args[0])
 
-	println("ls .")
+	log.Println("ls .")
 	ls(".")
-	println("ls ..")
+	log.Println("ls ..")
 	ls("..")
-	println("ls /")
+	log.Println("ls /")
 	ls("/")
 	// println("ls $HOME")
 	// ls(os.Getenv("HOME"))
-	println("ls $GITHUB_WORKSPACE")
+	log.Println("ls $GITHUB_WORKSPACE")
 	ls(os.Getenv("GITHUB_WORKSPACE"))
 	// /github/home
 
@@ -40,16 +40,16 @@ func main() {
 	printPwd()
 	printEnv()
 	printFileContent(githubOutput)
-	appendFile(githubOutput, fmt.Sprintf("arg=%v", args[0]))
+	appendToFile(githubOutput, fmt.Sprintf("arg=%v", args[0]))
 	printFileContent(githubOutput)
 }
 
-func printHello(args []string) {
-	name := args[0]
+func printHello(arg string) {
+	name := arg
 	log.Printf("Hello, %v!", name)
 }
 
-func appendFile(path, content string) {
+func appendToFile(path, content string) {
 	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0o644)
 	if err != nil {
 		log.Panic(err)
