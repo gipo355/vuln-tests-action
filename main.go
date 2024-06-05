@@ -22,17 +22,19 @@ func GetInputEnv(name string) string {
 
 func main() {
 	// get args
+	// args are used to pass input to the golang cli program, not to nmap
+	// we will use env vars to pass input to nmap or possibly args with --flag like --host=localhost
+	// or env INPUT_HOST=localhost
 	args := os.Args[1:]
 	if len(args) == 0 {
-		log.Panic("No args provided")
-	}
-	for _, arg := range args {
-		log.Printf("arg: %v", arg)
-	}
+		log.Printf("No args provided")
+	} else {
+		printHello(args[0])
 
-	// https://stackoverflow.com/questions/71357973/github-actions-set-two-output-names-from-custom-action-in-golang-code
-	githubOutput := GithubOutput()
-	log.Printf("GITHUB_OUTPUT: %v", githubOutput)
+		for _, arg := range args {
+			log.Printf("arg: %v", arg)
+		}
+	}
 
 	// all inputs are passed as env vars
 	// inputWhoToGreet := os.Getenv("INPUT_WHO-TO-GREET")
@@ -41,29 +43,49 @@ func main() {
 	// sets output using deprecated method ::set-output
 	// printTime()
 
+	// https://stackoverflow.com/questions/71357973/github-actions-set-two-output-names-from-custom-action-in-golang-code
+	githubOutput := GithubOutput()
+	log.Printf("GITHUB_OUTPUT: %v", githubOutput)
+
+	home := os.Getenv("HOME")
+	githubWorkspace := os.Getenv("GITHUB_WORKSPACE")
+
 	log.Println("ls .")
 	ls(".")
+
 	log.Println("ls ..")
 	ls("..")
+
 	log.Println("ls /")
 	ls("/")
-	log.Println("ls $HOME")
-	ls(os.Getenv("HOME"))
-	log.Println("ls $GITHUB_WORKSPACE")
-	ls(os.Getenv("GITHUB_WORKSPACE"))
+
+	if home != "" {
+		log.Println("ls $HOME")
+		ls(os.Getenv("HOME"))
+	}
+
+	if githubWorkspace != "" {
+		log.Println("ls $GITHUB_WORKSPACE")
+		ls(os.Getenv("GITHUB_WORKSPACE"))
+
+		printFileContent(githubOutput)
+
+		appendToFile(githubOutput, fmt.Sprintf("time=%v\n", time.Now().Format("15:04:05")))
+
+		appendToFile(githubOutput, fmt.Sprintf("arg=%v", args[0]))
+
+		printFileContent(githubOutput)
+	}
 
 	// doesn't exist
 	// log.Println("ls $RUNNER_WORKSPACE")
 	// ls(os.Getenv("RUNNER_WORKSPACE"))
 
+	log.Println("print pwd")
 	printPwd()
-	printEnv()
-	printFileContent(githubOutput)
-	appendToFile(githubOutput, fmt.Sprintf("time=%v\n", time.Now().Format("15:04:05")))
-	appendToFile(githubOutput, fmt.Sprintf("arg=%v", args[0]))
-	printFileContent(githubOutput)
 
-	printHello(args[0])
+	log.Println("print env")
+	printEnv()
 
 	log.Println("Executing nmap...")
 	simpleNmap()
@@ -171,11 +193,19 @@ func simpleNmap() {
 
 	cmd := exec.Command("nmap", "-sP", host)
 
-	cmd.Stdout = os.Stdout
+	file, fileErr := os.Create("nmap.log")
+	if fileErr != nil {
+		log.Panic(fileErr)
+	}
+	defer file.Close()
+
+	// this is a writer, we want to write to a file with bufio
+	// cmd.Stdout = os.Stdout
+	cmd.Stdout = file
 
 	cmd.Stderr = os.Stderr
 
-	if err := cmd.Run(); err != nil {
-		log.Fatal(err)
+	if cmdErr := cmd.Run(); cmdErr != nil {
+		log.Panic(cmdErr)
 	}
 }
