@@ -6,15 +6,8 @@ import (
 	"strings"
 )
 
-// func GetStatePath() string {
-// 	return os.Getenv("GITHUB_STATE")
-// }
-//
-// func GetOutputPath() string {
-// 	return os.Getenv("GITHUB_OUTPUT")
-// }
-
 // GetInputEnv returns the value of the input env var, requires "UPPER-VAR".
+// Github provides inputs as env vars in the format "INPUT_UPPER-VAR".
 func (e *Environment) GetUserInputFromEnv(name string) string {
 	upperName := strings.ToUpper(name)
 
@@ -22,6 +15,7 @@ func (e *Environment) GetUserInputFromEnv(name string) string {
 }
 
 // SetOutput sets the output of the action, requires "$name=$value" format.
+// Those will be availale to the next steps in the workflow as ${{ steps.$id.outputs.$name }}"
 func (e *Environment) SetOutput(name, value string) error {
 	path := e.GITHUB_OUTPUT
 	if path == "" {
