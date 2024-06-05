@@ -6,12 +6,16 @@ import (
 	"os"
 	"os/exec"
 	"slices"
+	"sync"
 )
 
 // nmap -sV --script=~/vulscan.nse www.example.com
 
-func (n *Client) ScanWithVulners(c chan<- error) {
+func (n *Client) ScanWithVulners(c chan<- error, wg *sync.WaitGroup) {
 	// defer close(c)
+	wg.Add(1)
+	defer wg.Done()
+
 	target := n.Config.Target
 
 	args := slices.Concat(

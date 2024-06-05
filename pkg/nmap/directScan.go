@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"slices"
+	"sync"
 )
 
 // Scan runs nmap with the provided arguments to stdout
@@ -29,8 +30,10 @@ import (
 // 	return fmt.Errorf("nmap: %w", cmd.Run())
 // }
 
-func (n *Client) DirectScan(nmapArgs []string, c chan<- error) {
+func (n *Client) DirectScan(nmapArgs []string, c chan<- error, wg *sync.WaitGroup) {
 	// defer close(c)
+	wg.Add(1)
+	defer wg.Done()
 
 	target := n.Config.Target
 

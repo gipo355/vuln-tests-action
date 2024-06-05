@@ -66,3 +66,7 @@ nmap formatter already available
 <https://github.com/vdjagilev/nmap-formatter>
 
 <https://gist.github.com/PSJoshi/1ddb53b42a1b099355df9eac86ced222>
+
+# CREDITS
+
+thank you @vdjagilev for the nmap formatter lib

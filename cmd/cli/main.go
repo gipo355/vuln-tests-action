@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/gipo355/vuln-tests-action/pkg/github"
@@ -81,6 +82,8 @@ func main() {
 	// TODO: remove hardcoded args
 	nmapArgs := []string{"-sP"}
 
+	var wg sync.WaitGroup
+
 	channels := []chan error{
 		make(chan error),
 		// make(chan error),
@@ -88,13 +91,13 @@ func main() {
 	}
 
 	// directChan := make(chan error)
-	go n.DirectScan(nmapArgs, channels[0])
+	go n.DirectScan(nmapArgs, channels[0], &wg)
 
 	// vulscanChan := make(chan error)
-	// go n.ScanWithVulscan(channels[1])
+	// go n.ScanWithVulscan(channels[1], &wg)
 
 	// vulnerChan := make(chan error)
-	// go n.ScanWithVulners(channels[2])
+	// go n.ScanWithVulners(channels[2], &wg)
 
 	// for i := 0; i < 3; i++ {
 	for i := 0; i < len(channels); i++ {
@@ -119,6 +122,7 @@ func main() {
 			// 	log.Println("vulscan scan finished")
 		}
 	}
+	wg.Wait()
 
 	log.Println("nmap finished")
 
