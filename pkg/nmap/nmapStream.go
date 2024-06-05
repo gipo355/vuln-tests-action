@@ -6,16 +6,18 @@ import (
 	"log"
 	"os"
 	"os/exec"
-
-	"github.com/gipo355/hello-world-docker-go-action/pkg/github"
+	"strings"
 )
 
-func SimpleNmapStream() {
-	host := github.GetInputEnv("HOST")
+func (n *NmapConfig) NmapStream() {
+	host := n.Host
+
+	// join args into a single string
+	args := strings.Join(n.Args, " ")
 
 	// this will execute the nmap, here we need to compose the command based on user input
 	// e.g. use scripts, flags, host, etc
-	cmd := exec.Command("nmap", "-sP", host)
+	cmd := exec.Command("nmap", args, host)
 
 	file, fileErr := os.Create("nmap.log")
 	if fileErr != nil {
