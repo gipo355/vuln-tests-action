@@ -27,30 +27,6 @@ func main() {
 		}
 	}
 
-	// githubOutput := github.GetOutputPath()
-	// log.Printf("GITHUB_OUTPUT: %v", githubOutput)
-
-	// home := os.Getenv("HOME")
-	// githubWorkspace := os.Getenv("GITHUB_WORKSPACE")
-
-	// if home != "" {
-	// 	log.Println("ls $HOME")
-	// 	utils.ListFolderContent(os.Getenv("HOME"))
-	// }
-
-	// if githubWorkspace != "" {
-	// 	log.Println("ls $GITHUB_WORKSPACE")
-	// 	utils.ListFolderContent(os.Getenv("GITHUB_WORKSPACE"))
-	//
-	// 	utils.PrintFileContent(githubOutput)
-	//
-	// 	utils.AppendToFile(githubOutput, fmt.Sprintf("time=%v\n", time.Now().Format("15:04:05")))
-	//
-	// 	utils.AppendToFile(githubOutput, fmt.Sprintf("arg=%v", args[0]))
-	//
-	// 	utils.PrintFileContent(githubOutput)
-	// }
-
 	log.Println("print pwd")
 	utils.PrintPwd()
 
