@@ -37,3 +37,6 @@ golang provides efficient concurrency and minimal image + mem size for container
 - create auto release and docker publish on tag
 - generate sarif report
 - add cobra and viper
+- split github utils in its own lib
+- understand golang versioning forlib
+- split smiattack cli with nmap in its own repo for action using the github lib and utils
