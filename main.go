@@ -45,10 +45,11 @@ func main() {
 	ls(os.Getenv("HOME"))
 	log.Println("ls $GITHUB_WORKSPACE")
 	ls(os.Getenv("GITHUB_WORKSPACE"))
-	// /github/home
 
-	log.Println("ls $RUNNER_WORKSPACE")
-	ls(os.Getenv("RUNNER_WORKSPACE"))
+	// doesn't exist
+	// log.Println("ls $RUNNER_WORKSPACE")
+	// ls(os.Getenv("RUNNER_WORKSPACE"))
+
 	printPwd()
 	printEnv()
 	printFileContent(githubOutput)
