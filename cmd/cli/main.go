@@ -116,11 +116,13 @@ func main() {
 
 	for i := 0; i < 3; i++ {
 		select {
+
 		case directErr := <-directChan:
 			if directErr != nil {
 				log.Panic(fmt.Errorf("error direct scanning: %w", directErr))
 			}
 			log.Println("direct scan finished")
+
 		case vulnerErr := <-vulnerChan:
 			if vulnerErr != nil {
 				log.Panic(fmt.Errorf("error scanning with vulners: %w", vulnerErr))
