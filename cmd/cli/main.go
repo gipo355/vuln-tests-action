@@ -123,15 +123,21 @@ func main() {
 		}
 	}
 	wg.Wait()
+	for _, ch := range channels {
+		close(ch)
+	}
 
 	log.Println("nmap finished")
 
 	// BUG: doesn't wait for the goroutines to finish
-	n.ConverToJSON("direct")
-	n.ConverToJSON("vulner")
-	n.ConverToJSON("vulscan")
+	if cErr := n.ConverToJSON("direct"); cErr != nil {
+		log.Fatal(cErr)
+	}
+	if cErr := n.ConverToJSON("vulners"); cErr != nil {
+		log.Fatal(cErr)
+	}
 
-	for _, ch := range channels {
-		close(ch)
+	if cErr := n.ConverToJSON("vulscan"); cErr != nil {
+		log.Fatal(cErr)
 	}
 }

@@ -2,6 +2,7 @@ package nmap
 
 import (
 	"encoding/xml"
+	"fmt"
 	"os"
 
 	"github.com/vdjagilev/nmap-formatter/v3/formatter"
@@ -69,6 +70,7 @@ func ConvertNmapXMLToSarif() error {
 func (n *Client) ConverToJSON(name string) error {
 	fileName := "nmap-reports/" + name + "/nmap-report.xml"
 	fileOutput := "nmap-reports/" + name + "/nmap-report.json"
+
 	var nmap formatter.NMAPRun
 
 	var config formatter.Config = formatter.Config{}
@@ -81,7 +83,7 @@ func (n *Client) ConverToJSON(name string) error {
 
 	// Unmarshal XML and map structure(s) fields accordingly
 	if err = xml.Unmarshal(content, &nmap); err != nil {
-		panic(err)
+		return fmt.Errorf("failed to unmarshal xml: %w", err)
 	}
 
 	// Output data to console stdout
@@ -90,7 +92,7 @@ func (n *Client) ConverToJSON(name string) error {
 	// config.Writer = os.Stdout
 	outputFile, err := os.Create(fileOutput)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("failed to create file: %w", err)
 	}
 	config.Writer = outputFile
 	// Formatting data to JSON, you can use:
@@ -111,12 +113,14 @@ func (n *Client) ConverToJSON(name string) error {
 	formatter := formatter.New(&config)
 	if formatter == nil {
 		// Not json/markdown/html/csv
-		panic("wrong formatter provided")
+		return fmt.Errorf("wrong formatter provided")
 	}
 
 	// Attempt to format the data
 	if err = formatter.Format(&templateData, "" /* no template content for JSON */); err != nil {
 		// html template could not be parsed or some other issue occured
-		panic(err)
+		return fmt.Errorf("failed to format data: %w", err)
 	}
+
+	return nil
 }
