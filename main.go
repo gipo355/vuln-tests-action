@@ -90,7 +90,8 @@ func main() {
 	printEnv()
 
 	log.Println("Executing nmap...")
-	simpleNmap()
+	// simpleNmap()
+	simpleNmapStream()
 }
 
 func printHello(arg string) {
