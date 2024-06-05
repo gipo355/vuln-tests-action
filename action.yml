@@ -42,3 +42,4 @@ runs:
   # image: "docker://hello-world-docker-go-action"
   args:
     - ${{ inputs.who-to-greet }}
+    - --host ${{ inputs.host }}

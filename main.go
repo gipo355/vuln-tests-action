@@ -8,19 +8,32 @@ import (
 	"time"
 )
 
+func GithubState() string {
+	return os.Getenv("GITHUB_STATE")
+}
+
+func GithubOutput() string {
+	return os.Getenv("GITHUB_OUTPUT")
+}
+
 func main() {
 	// get args
 	args := os.Args[1:]
 	if len(args) == 0 {
 		log.Panic("No args provided")
 	}
+	log.Printf("args: %v", args)
 
 	// https://stackoverflow.com/questions/71357973/github-actions-set-two-output-names-from-custom-action-in-golang-code
-	githubOutput := os.Getenv("GITHUB_OUTPUT")
+	githubOutput := GithubOutput()
 	log.Printf("GITHUB_OUTPUT: %v", githubOutput)
 
-	printTime()
-	printHello(args[0])
+	// all inputs are passed as env vars
+	// inputWhoToGreet := os.Getenv("INPUT_WHO-TO-GREET")
+	// args to be passed to the action entrypoint must be passed to args in gh action
+
+	// sets output using deprecated method ::set-output
+	// printTime()
 
 	log.Println("ls .")
 	ls(".")
@@ -28,20 +41,22 @@ func main() {
 	ls("..")
 	log.Println("ls /")
 	ls("/")
-	// println("ls $HOME")
-	// ls(os.Getenv("HOME"))
+	log.Println("ls $HOME")
+	ls(os.Getenv("HOME"))
 	log.Println("ls $GITHUB_WORKSPACE")
 	ls(os.Getenv("GITHUB_WORKSPACE"))
 	// /github/home
 
-	// RUNNER_WORKSPACE
-	// println("ls $RUNNER_WORKSPACE")
-	// ls(os.Getenv("RUNNER_WORKSPACE"))
+	log.Println("ls $RUNNER_WORKSPACE")
+	ls(os.Getenv("RUNNER_WORKSPACE"))
 	printPwd()
 	printEnv()
 	printFileContent(githubOutput)
+	appendToFile(githubOutput, fmt.Sprintf("time=%v\n", time.Now().Format("15:04:05")))
 	appendToFile(githubOutput, fmt.Sprintf("arg=%v", args[0]))
 	printFileContent(githubOutput)
+
+	printHello(args[0])
 }
 
 func printHello(arg string) {
