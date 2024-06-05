@@ -119,4 +119,8 @@ func main() {
 			log.Println("vulscan scan finished")
 		}
 	}
+
+	for _, ch := range channels {
+		close(ch)
+	}
 }

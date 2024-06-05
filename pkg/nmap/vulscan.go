@@ -11,6 +11,7 @@ import (
 // nmap -sV --script=~/vulscan.nse www.example.com
 
 func (n *Client) ScanWithVulscan(c chan<- error) {
+	// defer close(c)
 	target := n.Config.Target
 
 	args := slices.Concat(
