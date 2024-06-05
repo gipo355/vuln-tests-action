@@ -10,7 +10,7 @@ import (
 
 // nmap -sV --script=~/vulscan.nse www.example.com
 
-func (n *Client) ScanWithVulscan() error {
+func (n *Client) ScanWithVulscan(c chan<- error) {
 	target := n.Config.Target
 
 	args := slices.Concat(
@@ -24,7 +24,8 @@ func (n *Client) ScanWithVulscan() error {
 	)
 
 	if n.Config.WriteToFile {
-		return n.writeToFile(args, "vulscan")
+		c <- n.writeToFile(args, "vulscan")
+		return
 	}
 
 	cmd := exec.Command("nmap", args...)
@@ -35,5 +36,5 @@ func (n *Client) ScanWithVulscan() error {
 	cmd.Stderr = os.Stderr
 	log.Printf("cmd: %v", cmd)
 
-	return fmt.Errorf("nmap: %w", cmd.Run())
+	c <- fmt.Errorf("nmap: %w", cmd.Run())
 }

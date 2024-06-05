@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -101,18 +102,53 @@ func main() {
 	// TODO: remove hardcoded args
 	nmapArgs := []string{"-sP"}
 
-	err = n.DirectScan(nmapArgs)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// err = n.DirectScan(nmapArgs)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// c := make(chan error)
+	// n.DirectScan(nmapArgs, c)
+	directChan := make(chan error)
+	go n.DirectScan(nmapArgs, directChan)
 
-	err = n.ScanWithVulscan()
-	if err != nil {
-		log.Fatal(err)
-	}
+	// err = n.ScanWithVulscan()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	//
+	vulscanChan := make(chan error)
+	go n.ScanWithVulscan(vulscanChan)
 
-	err = n.ScanWithVulners()
-	if err != nil {
-		log.Fatal(err)
+	// err = n.ScanWithVulners()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	vulnerChan := make(chan error)
+	go n.ScanWithVulners(vulnerChan)
+
+	for i := 0; i < 3; i++ {
+		select {
+		case directErr := <-directChan:
+			if directErr != nil {
+				log.Panic(fmt.Errorf("error direct scanning: %w", directErr))
+			}
+			log.Println("direct scan finished")
+		case vulnerErr := <-vulnerChan:
+			if vulnerErr != nil {
+				log.Panic(fmt.Errorf("error scanning with vulners: %w", vulnerErr))
+			}
+			log.Println("vulners scan finished")
+
+		case vulscanErr := <-vulscanChan:
+			if vulscanErr != nil {
+				log.Panic(fmt.Errorf("error scanning with vulscan: %w", vulscanErr))
+			}
+			log.Println("vulscan scan finished")
+		}
 	}
+	// err = <-resultChan // This will block until the goroutine finishes
+	// if err != nil {
+	// 	// Handle error
+	// 	log.Panic(fmt.Errorf("error direct scanning: %w", err))
+	// }
 }

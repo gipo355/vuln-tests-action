@@ -10,7 +10,7 @@ import (
 
 // nmap -sV --script=~/vulscan.nse www.example.com
 
-func (n *Client) ScanWithVulners() error {
+func (n *Client) ScanWithVulners(c chan<- error) {
 	target := n.Config.Target
 
 	args := slices.Concat(
@@ -23,8 +23,12 @@ func (n *Client) ScanWithVulners() error {
 		[]string{target},
 	)
 
+	var err error
+
 	if n.Config.WriteToFile {
-		return n.writeToFile(args, "vulners")
+		err = n.writeToFile(args, "vulners")
+		c <- err
+		return
 	}
 
 	cmd := exec.Command("nmap", args...)
@@ -35,5 +39,6 @@ func (n *Client) ScanWithVulners() error {
 	cmd.Stderr = os.Stderr
 	log.Printf("cmd: %v", cmd)
 
-	return fmt.Errorf("nmap: %w", cmd.Run())
+	err = fmt.Errorf("nmap: %w", cmd.Run())
+	c <- err
 }
