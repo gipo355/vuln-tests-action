@@ -63,9 +63,12 @@ func ConvertNmapXMLToSarif() error {
 // 	return nil
 // }
 
-func (n *Client) ConverToJSON() {
-	fileName := "nmap-reports/direct/nmap-report.xml"
-	fileOutput := "nmap-reports/direct/nmap-report.json"
+// ConverToJSON converts the nmap xml report to json.
+// Specify the name of the report to convert.
+// Can be either "vulscan", "direct", or "vulners".
+func (n *Client) ConverToJSON(name string) error {
+	fileName := "nmap-reports/" + name + "/nmap-report.xml"
+	fileOutput := "nmap-reports/" + name + "/nmap-report.json"
 	var nmap formatter.NMAPRun
 
 	var config formatter.Config = formatter.Config{}
@@ -117,62 +120,3 @@ func (n *Client) ConverToJSON() {
 		panic(err)
 	}
 }
-
-// sarif example for eslint
-// {
-//   "version": "2.1.0",
-//   "$schema": "http://json.schemastore.org/sarif-2.1.0-rtm.4",
-//   "runs": [
-//     {
-//       "tool": {
-//         "driver": {
-//           "name": "ESLint",
-//           "informationUri": "https://eslint.org",
-//           "rules": [
-//             {
-//               "id": "no-unused-vars",
-//               "shortDescription": {
-//                 "text": "disallow unused variables"
-//               },
-//               "helpUri": "https://eslint.org/docs/rules/no-unused-vars",
-//               "properties": {
-//                 "category": "Variables"
-//               }
-//             }
-//           ]
-//         }
-//       },
-//       "artifacts": [
-//         {
-//           "location": {
-//             "uri": "file:///C:/dev/sarif/sarif-tutorials/samples/Introduction/simple-example.js"
-//           }
-//         }
-//       ],
-//       "results": [
-//         {
-//           "level": "error",
-//           "message": {
-//             "text": "'x' is assigned a value but never used."
-//           },
-//           "locations": [
-//             {
-//               "physicalLocation": {
-//                 "artifactLocation": {
-//                   "uri": "file:///C:/dev/sarif/sarif-tutorials/samples/Introduction/simple-example.js",
-//                   "index": 0
-//                 },
-//                 "region": {
-//                   "startLine": 1,
-//                   "startColumn": 5
-//                 }
-//               }
-//             }
-//           ],
-//           "ruleId": "no-unused-vars",
-//           "ruleIndex": 0
-//         }
-//       ]
-//     }
-//   ]
-// }

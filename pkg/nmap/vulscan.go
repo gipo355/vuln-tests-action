@@ -21,8 +21,8 @@ func (n *Client) ScanWithVulscan(c chan<- error, wg *sync.WaitGroup) {
 	args := slices.Concat(
 
 		[]string{
-			"-sV",                          // Version detection
-			"--script=vulscan/vulscan.nse", // Script to run
+			"-sV",               // Version detection
+			"--script=vulscan/", // Script to run
 		},
 
 		[]string{target},
