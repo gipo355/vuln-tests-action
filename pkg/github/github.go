@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/gipo355/hello-world-docker-go-action/pkg/utils"
 )
 
 // GetInputEnv returns the value of the input env var, requires "UPPER-VAR".
@@ -15,43 +17,33 @@ func (e *Environment) GetUserInputFromEnv(name string) string {
 }
 
 // SetOutput sets the output of the action, requires "$name=$value" format.
-// Those will be availale to the next steps in the workflow as ${{ steps.$id.outputs.$name }}"
+// Those will be availale to the next steps in the workflow as ${{ steps.$id.outputs.$name }}".
 func (e *Environment) SetOutput(name, value string) error {
 	path := e.GITHUB_OUTPUT
 	if path == "" {
-		return fmt.Errorf("Output path not set")
+		return fmt.Errorf("output path not set")
 	}
-
-	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0o644)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
 
 	content := fmt.Sprintf("%s=%s\n", name, value)
 
-	if _, err = file.WriteString(content); err != nil {
-		return err
-	}
-
-	return nil
+	return fmt.Errorf("error from appendtofile %w", utils.AppendToFile(path, content))
 }
 
 // SetState sets the state of the action, requires TODO:
 func (e *Environment) SetState(content string) error {
 	path := e.GITHUB_STATE
 	if path == "" {
-		return fmt.Errorf("State path not set")
+		return fmt.Errorf("state path not set")
 	}
 
 	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0o644)
 	if err != nil {
-		return err
+		return fmt.Errorf("error from openfile %w", err)
 	}
 	defer file.Close()
 
 	if _, err = file.WriteString(content); err != nil {
-		return err
+		return fmt.Errorf("error from write %w", err)
 	}
 
 	return nil

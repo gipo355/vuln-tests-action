@@ -1,6 +1,10 @@
+//nolint:var-naming // we want to keep the same name as the GitHub Actions environment variables
 package github
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
 // Variable	Description
 //
@@ -105,7 +109,11 @@ type Environment struct {
 	GITHUB_STATE string
 }
 
-func NewGitHubEnvironment() *Environment {
+func NewGitHubEnvironment() (*Environment, error) {
+	if os.Getenv("CI") != "true" {
+		return nil, fmt.Errorf("not running in CI")
+	}
+
 	return &Environment{
 		HOME:                       os.Getenv("HOME"),
 		GITHUB_WORKSPACE:           os.Getenv("GITHUB_WORKSPACE"),
@@ -152,5 +160,5 @@ func NewGitHubEnvironment() *Environment {
 		RUNNER_TEMP:                os.Getenv("RUNNER_TEMP"),
 		RUNNER_TOOL_CACHE:          os.Getenv("RUNNER_TOOL_CACHE"),
 		GITHUB_STATE:               os.Getenv("GITHUB_STATE"),
-	}
+	}, nil
 }

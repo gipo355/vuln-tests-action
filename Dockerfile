@@ -12,6 +12,8 @@ COPY . /$PROJECT
 
 WORKDIR /$PROJECT
 
+# TODO: add vulner scripts from repo
+
 RUN go mod download && go mod verify
 
 RUN go build -v -o /$PROJECT/bin/$PROJECT

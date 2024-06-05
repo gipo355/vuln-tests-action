@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func (n *NmapConfig) NmapStream() {
+func (n *NmapConfig) NmapStreamToFile() {
 	host := n.Host
 
 	// join args into a single string

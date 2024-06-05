@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -27,50 +26,29 @@ func main() {
 		}
 	}
 
-	// all inputs are passed as env vars
-	// inputWhoToGreet := os.Getenv("INPUT_WHO-TO-GREET")
-	// args to be passed to the action entrypoint must be passed to args in gh action
+	// githubOutput := github.GetOutputPath()
+	// log.Printf("GITHUB_OUTPUT: %v", githubOutput)
 
-	// sets output using deprecated method ::set-output
-	// utils.PrintTime()
+	// home := os.Getenv("HOME")
+	// githubWorkspace := os.Getenv("GITHUB_WORKSPACE")
 
-	// https://stackoverflow.com/questions/71357973/github-actions-set-two-output-names-from-custom-action-in-golang-code
-	githubOutput := github.GetOutputPath()
-	log.Printf("GITHUB_OUTPUT: %v", githubOutput)
+	// if home != "" {
+	// 	log.Println("ls $HOME")
+	// 	utils.ListFolderContent(os.Getenv("HOME"))
+	// }
 
-	home := os.Getenv("HOME")
-	githubWorkspace := os.Getenv("GITHUB_WORKSPACE")
-
-	log.Println("ls .")
-	utils.ListFolderContent(".")
-
-	log.Println("ls ..")
-	utils.ListFolderContent("..")
-
-	log.Println("ls /")
-	utils.ListFolderContent("/")
-
-	if home != "" {
-		log.Println("ls $HOME")
-		utils.ListFolderContent(os.Getenv("HOME"))
-	}
-
-	if githubWorkspace != "" {
-		log.Println("ls $GITHUB_WORKSPACE")
-		utils.ListFolderContent(os.Getenv("GITHUB_WORKSPACE"))
-
-		utils.PrintFileContent(githubOutput)
-
-		utils.AppendToFile(githubOutput, fmt.Sprintf("time=%v\n", time.Now().Format("15:04:05")))
-
-		utils.AppendToFile(githubOutput, fmt.Sprintf("arg=%v", args[0]))
-
-		utils.PrintFileContent(githubOutput)
-	}
-
-	// doesn't exist
-	// log.Println("ls $RUNNER_WORKSPACE")
-	// ls(os.Getenv("RUNNER_WORKSPACE"))
+	// if githubWorkspace != "" {
+	// 	log.Println("ls $GITHUB_WORKSPACE")
+	// 	utils.ListFolderContent(os.Getenv("GITHUB_WORKSPACE"))
+	//
+	// 	utils.PrintFileContent(githubOutput)
+	//
+	// 	utils.AppendToFile(githubOutput, fmt.Sprintf("time=%v\n", time.Now().Format("15:04:05")))
+	//
+	// 	utils.AppendToFile(githubOutput, fmt.Sprintf("arg=%v", args[0]))
+	//
+	// 	utils.PrintFileContent(githubOutput)
+	// }
 
 	log.Println("print pwd")
 	utils.PrintPwd()
@@ -80,9 +58,44 @@ func main() {
 
 	log.Println("Executing nmap...")
 
+	// TODO: github must move to its own package
+
+	// github section
+	gh, err := github.NewGitHubEnvironment()
+	if err != nil || gh == nil {
+		log.Fatal(err)
+	}
+
+	// some logging
+	log.Println("github output", gh.GITHUB_OUTPUT)
+	log.Println("github state", gh.GITHUB_STATE)
+	log.Println("github workspace", gh.GITHUB_WORKSPACE)
+	log.Println("home", gh.HOME)
+	log.Println("ls .")
+	utils.ListFolderContent(".")
+	log.Println("ls ..")
+	utils.ListFolderContent("..")
+	log.Println("ls /")
+	utils.ListFolderContent("/")
+
+	err = gh.SetOutput("time", time.Now().Format("15:04:05"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = gh.SetOutput("arg", args[0])
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// TODO: nmap must move to its own package
 	// nmap section
 
-	// utils.SimpleNmap()
+	nmapArgs := []string{"-sV", "-p", "80,443", "-oN", "nmap.log"}
 
-	nmap.SimpleNmapStream()
+	// utils.SimpleNmap()
+	n := nmap.NewNmapClient(
+		"localhost",
+		nmapArgs,
+	)
+	n.NmapStreamToFile()
 }

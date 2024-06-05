@@ -12,17 +12,18 @@ func PrintHello(arg string) {
 	log.Printf("Hello, %v!", name)
 }
 
-func AppendToFile(path, content string) {
+func AppendToFile(path, content string) error {
 	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0o644)
 	if err != nil {
-		log.Panic(err)
+		return err
 	}
 	defer file.Close()
 
 	_, err = file.WriteString(content)
 	if err != nil {
-		log.Panic(err)
+		return err
 	}
+	return nil
 }
 
 func PrintPwd() {
