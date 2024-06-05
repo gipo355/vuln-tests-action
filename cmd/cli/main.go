@@ -81,31 +81,38 @@ func main() {
 	// TODO: remove hardcoded args
 	nmapArgs := []string{"-sP"}
 
-	directChan := make(chan error)
-	go n.DirectScan(nmapArgs, directChan)
+	channels := []chan error{
+		make(chan error),
+		make(chan error),
+		make(chan error),
+	}
 
-	vulscanChan := make(chan error)
-	go n.ScanWithVulscan(vulscanChan)
+	// directChan := make(chan error)
+	go n.DirectScan(nmapArgs, channels[0])
 
-	vulnerChan := make(chan error)
-	go n.ScanWithVulners(vulnerChan)
+	// vulscanChan := make(chan error)
+	go n.ScanWithVulscan(channels[1])
 
-	for i := 0; i < 3; i++ {
+	// vulnerChan := make(chan error)
+	go n.ScanWithVulners(channels[2])
+
+	// for i := 0; i < 3; i++ {
+	for i := 0; i < len(channels); i++ {
 		select {
-
-		case directErr := <-directChan:
+		// case directErr := <-directChan:
+		case directErr := <-channels[0]:
 			if directErr != nil {
 				log.Panic(fmt.Errorf("error direct scanning: %w", directErr))
 			}
 			log.Println("direct scan finished")
 
-		case vulnerErr := <-vulnerChan:
+		case vulnerErr := <-channels[1]:
 			if vulnerErr != nil {
 				log.Panic(fmt.Errorf("error scanning with vulners: %w", vulnerErr))
 			}
 			log.Println("vulners scan finished")
 
-		case vulscanErr := <-vulscanChan:
+		case vulscanErr := <-channels[2]:
 			if vulscanErr != nil {
 				log.Panic(fmt.Errorf("error scanning with vulscan: %w", vulscanErr))
 			}
