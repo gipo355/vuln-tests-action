@@ -52,13 +52,13 @@ tasks:
     deps:
       - build
     cmds:
-      - docker buildx build -t gipo355/nmap-go-wrapper -f Dockerfile . --load
+      - docker buildx build -t gipo355/happy-nuker -f Dockerfile . --load
   docker-push:
     desc: Push the docker image
     deps:
       - docker-build
     cmds:
-      - docker buildx build -t halamert/nmap-go-wrapper -f Dockerfile . --push
+      - docker buildx build -t halamert/happy-nuker -f Dockerfile . --push
   preview:
     desc: Build and serve the api
     deps:

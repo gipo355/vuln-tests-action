@@ -22,6 +22,10 @@ inputs:
     description: "Use vulners script"
     required: false
     default: "false"
+  run-vulscan:
+    description: "Use vulscan script"
+    required: false
+    default: "false"
 outputs:
   time: # id of output
     description: "The time we greeted you"
@@ -34,8 +38,8 @@ runs:
   # in registry.
   # image: "Dockerfile"
   # image: "docker://docker.io/halamert/vuln-tests-action"
-  image: "docker://gipo355/nmap-go-wrapper:latest"
+  image: "docker://gipo355/happy-nuker:latest"
   # image: "docker://vuln-tests-action"
   args:
     - ${{ inputs.who-to-greet }}
-    - --host ${{ inputs.host }}
+    - "--host ${{ inputs.host }}"
