@@ -9,11 +9,11 @@ import (
 	"strings"
 )
 
-func (n *NmapConfig) NmapStreamToFile() {
-	host := n.Host
+func (n *Client) WriteToFile() {
+	host := n.Config.Host
 
 	// join args into a single string
-	args := strings.Join(n.Args, " ")
+	args := strings.Join(n.Config.Args, " ")
 
 	// this will execute the nmap, here we need to compose the command based on user input
 	// e.g. use scripts, flags, host, etc

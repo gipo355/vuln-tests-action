@@ -42,3 +42,19 @@ golang provides efficient concurrency and minimal image + mem size for container
 - split smiattack cli with nmap in its own repo for action using the github lib and utils
 
 - make a list of all go libs and tools
+
+# splits
+
+action repo
+
+- uses docker wrapper repo
+- uses github utils repo to get input
+
+cli nmap repo
+
+- provides commands like scan, list, etc
+- provides writeToFile, writeToSarif, output to console
+
+utils repo
+
+- provides github utils like getRepo, getIssue, etc

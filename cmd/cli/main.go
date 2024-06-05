@@ -93,9 +93,10 @@ func main() {
 	nmapArgs := []string{"-sV", "-p", "80,443", "-oN", "nmap.log"}
 
 	// utils.SimpleNmap()
+
 	n := nmap.NewNmapClient(
 		"localhost",
 		nmapArgs,
 	)
-	n.NmapStreamToFile()
+	n.WriteToFile()
 }

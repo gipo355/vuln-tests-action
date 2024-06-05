@@ -1,14 +1,13 @@
 package nmap
 
-type NmapConfig struct {
+type Config struct {
 	Host string
 	Args []string
 }
 
-func NewNmapClient(host string, args []string) *NmapConfig {
-	return &NmapConfig{
+func NewConfig(host string, args []string) *Config {
+	return &Config{
 		Host: host,
-		// Args: []string{"-sP", host},
 		Args: args,
 	}
 }
