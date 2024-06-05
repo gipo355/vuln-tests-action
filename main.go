@@ -16,6 +16,10 @@ func GithubOutput() string {
 	return os.Getenv("GITHUB_OUTPUT")
 }
 
+func GetInputEnv(name string) string {
+	return os.Getenv("INPUT_" + name)
+}
+
 func main() {
 	// get args
 	args := os.Args[1:]
@@ -60,10 +64,14 @@ func main() {
 	printFileContent(githubOutput)
 
 	printHello(args[0])
+
+	log.Println("Executing nmap...")
+	simpleNmap()
 }
 
 func printHello(arg string) {
 	name := arg
+
 	log.Printf("Hello, %v!", name)
 }
 
@@ -96,10 +104,12 @@ func printEnv() {
 
 func ls(path string) {
 	cmd := exec.Command("ls", "-la", path)
+
 	cmd.Stdout = os.Stdout
+
 	cmd.Stderr = os.Stderr
-	err := cmd.Run()
-	if err != nil {
+
+	if err := cmd.Run(); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -129,6 +139,7 @@ func printTime() {
 
 	// WARN: deprecated
 	fmt.Printf(`::set-output name=time::%s`, currentTime)
+
 	fmt.Print("\n")
 
 	// DEPRECATED ::set-output
@@ -153,4 +164,18 @@ func printTime() {
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
+}
+
+func simpleNmap() {
+	host := GetInputEnv("HOST")
+
+	cmd := exec.Command("nmap", "-sP", host)
+
+	cmd.Stdout = os.Stdout
+
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		log.Fatal(err)
+	}
 }
