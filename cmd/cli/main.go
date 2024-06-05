@@ -122,6 +122,7 @@ func main() {
 
 	log.Println("nmap finished")
 
+	// BUG: doesn't wait for the goroutines to finish
 	n.ConverToJSON()
 
 	for _, ch := range channels {
