@@ -9,14 +9,15 @@ ENV PROJECT=${EXECUTABLE}
 RUN mkdir -p /$PROJECT
 
 
-# TODO: fork repo to pin
-# vulnscan scripts for nmap
+# TODO: fork repos to pin
+
 # https://securitytrails.com/blog/nmap-vulnerability-scan
-RUN git clone https://github.com/scipag/vulscan /scipag_vulscan
-# RUN ln -s /scipag_vulscan /usr/share/nmap/scripts/vulscan
+RUN git clone https://github.com/scipag/vulscan.git /scipag_vulscan
+RUN rm -rf /usr/share/nmap/scripts/vulscan/.git
 
 # RUN cd /usr/share/nmap/scripts/
 RUN git clone https://github.com/vulnersCom/nmap-vulners.git /nmap-vulners
+RUN rm -rf /usr/share/nmap/scripts/nmap-vulners/.git
 
 COPY . /$PROJECT
 

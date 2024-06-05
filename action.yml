@@ -2,7 +2,7 @@ name: "Nmap Action"
 description: "Runs nmap on a target host"
 author: gipo355
 inputs:
-  host:
+  target:
     description: "Host to scan"
     required: false
     default: "localhost"
@@ -10,14 +10,19 @@ inputs:
     description: "Generate a report"
     required: false
     default: "false"
-  upload-report-to-code-scans:
-    description: "Upload the report"
+  generate-sarif:
+    description: "Generate a SARIF report"
     required: false
     default: "false"
+  # must be done separately
+  # upload-report-to-code-scans:
+  #   description: "Upload the report"
+  #   required: false
+  #   default: "false"
   nmap-arguments:
     description: "Arguments to pass to nmap"
     required: false
-    default: "-sV"
+    default: "-sP"
   run-vulners:
     description: "Use vulners script"
     required: false
@@ -26,20 +31,9 @@ inputs:
     description: "Use vulscan script"
     required: false
     default: "false"
-outputs:
-  time: # id of output
-    description: "The time we greeted you"
-  arg:
-    description: "The argument we passed"
 runs:
   using: "docker"
-  # in repo
-  # image: "Dockerfile"
-  # in registry.
-  # image: "Dockerfile"
-  # image: "docker://docker.io/halamert/vuln-tests-action"
-  image: "docker://gipo355/happy-nuker:latest"
-  # image: "docker://vuln-tests-action"
+  image: "docker://gipo355/nmap-go-wrapper:latest"
   args:
     - ${{ inputs.who-to-greet }}
     - "--host ${{ inputs.host }}"
