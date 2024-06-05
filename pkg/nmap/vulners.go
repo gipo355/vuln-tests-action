@@ -10,7 +10,7 @@ import (
 
 // nmap -sV --script=~/vulscan.nse www.example.com
 
-func (n *Client) ScanVulners() error {
+func (n *Client) ScanWithVulners() error {
 	target := n.Config.Target
 
 	args := slices.Concat(

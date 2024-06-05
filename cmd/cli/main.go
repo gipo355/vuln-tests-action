@@ -106,7 +106,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = n.Vulscan()
+	err = n.ScanWithVulscan()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = n.ScanWithVulners()
 	if err != nil {
 		log.Fatal(err)
 	}
