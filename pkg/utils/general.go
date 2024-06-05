@@ -60,3 +60,8 @@ func PrintFileContent(path string) {
 
 	println(string(buf))
 }
+
+func CommandExists(cmd string) bool {
+	_, err := exec.LookPath(cmd)
+	return err == nil
+}

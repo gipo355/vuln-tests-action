@@ -89,7 +89,7 @@ func main() {
 
 	log.Println("Executing nmap...")
 
-	n := nmap.NewNmapClient(
+	n, err := nmap.NewNmapClient(
 		&nmap.Config{
 			Target:        "localhost",
 			WriteToFile:   true,
@@ -97,32 +97,20 @@ func main() {
 			OutputDir:     "nmap-reports",
 		},
 	)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Testing
 	// TODO: remove hardcoded args
 	nmapArgs := []string{"-sP"}
 
-	// err = n.DirectScan(nmapArgs)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// c := make(chan error)
-	// n.DirectScan(nmapArgs, c)
 	directChan := make(chan error)
 	go n.DirectScan(nmapArgs, directChan)
 
-	// err = n.ScanWithVulscan()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	//
 	vulscanChan := make(chan error)
 	go n.ScanWithVulscan(vulscanChan)
 
-	// err = n.ScanWithVulners()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
 	vulnerChan := make(chan error)
 	go n.ScanWithVulners(vulnerChan)
 
@@ -146,9 +134,4 @@ func main() {
 			log.Println("vulscan scan finished")
 		}
 	}
-	// err = <-resultChan // This will block until the goroutine finishes
-	// if err != nil {
-	// 	// Handle error
-	// 	log.Panic(fmt.Errorf("error direct scanning: %w", err))
-	// }
 }
