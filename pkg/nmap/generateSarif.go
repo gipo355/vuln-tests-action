@@ -64,12 +64,14 @@ func ConvertNmapXMLToSarif() error {
 // }
 
 func (n *Client) ConverToJSON() {
+	fileName := "nmap-reports/vulners/nmap-report.xml"
+	fileOutput := "nmap-reports/vulners/nmap-report.json"
 	var nmap formatter.NMAPRun
 
 	var config formatter.Config = formatter.Config{}
 
 	// Read XML file that was produced by nmap (with -oX option)
-	content, err := os.ReadFile("nmap-reports/direct/nmap-report.xml")
+	content, err := os.ReadFile(fileName)
 	if err != nil {
 		panic(err)
 	}
@@ -83,7 +85,7 @@ func (n *Client) ConverToJSON() {
 	// You can use any other io.Writer implementation
 	// for example: os.OpenFile("file.json", os.O_CREATE|os.O_EXCL|os.O_WRONLY, os.ModePerm)
 	// config.Writer = os.Stdout
-	outputFile, err := os.Create("nmap-reports/direct/nmap-report.json")
+	outputFile, err := os.Create(fileOutput)
 	if err != nil {
 		panic(err)
 	}
