@@ -1,4 +1,4 @@
-name: "Vuln Scanners Nmap Action"
+name: "Vuln Docker Scanners Nmap Action"
 description: "Runs nmap on a target host"
 author: gipo355
 inputs:

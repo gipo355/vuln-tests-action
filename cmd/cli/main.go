@@ -5,37 +5,12 @@ import (
 	"log"
 	"os"
 	"sync"
-	"time"
 
-	"github.com/gipo355/vuln-docker-scanners/pkg/github"
 	"github.com/gipo355/vuln-docker-scanners/pkg/nmap"
 	"github.com/gipo355/vuln-docker-scanners/pkg/utils"
 )
 
-// we want to run something like
-// docker run gipo355/vuln-docker-scanners:latest --vulner --vulscan --target 127.0.0.1 --port 3000 --args "-sP"
-// where we get the input from the action.yml file
-//   args:
-// - "--target=${{ inputs.host }}"
-// - "--port=${{ inputs.port }}"
-// - "--generate-reports=${{ inputs.generate-reports }}"
-// - "--generate-sarif=${{ inputs.generate-sarif }}"
-// - "--nmap-arguments=${{ inputs.nmap-arguments }}"
-// - "--vulners=${{ inputs.vulners }}"
-// - "--vulscan=${{ inputs.vulscan }}"
-// - "--reports-dir=${{ inputs.reports-dir }}"
-
 func main() {
-	// NOTE:
-	// how to split docker from github action
-	// github action provides arguments to the docker container and env vars
-	// should i make the docker container to be a cli program independent from github?
-	// should i import the library and use it in the github action to create an independent Dockerfile?
-
-	// get args
-	// args are used to pass input to the golang cli program, not to nmap
-	// we will use env vars to pass input to nmap or possibly args with --flag like --host=localhost
-	// or env INPUT_HOST=localhost
 	args := os.Args[1:]
 	if len(args) == 0 {
 		log.Printf("No args provided")
@@ -47,36 +22,6 @@ func main() {
 
 	log.Println("print pwd")
 	utils.PrintPwd()
-
-	// log.Println("print env")
-	// utils.PrintEnvVars()
-
-	// TODO: github must move to its own package
-
-	// github section
-	gh, err := github.NewGitHubEnvironment()
-	if err == nil {
-		// some logging
-		log.Println("github output", gh.GITHUB_OUTPUT)
-		log.Println("github state", gh.GITHUB_STATE)
-		log.Println("github workspace", gh.GITHUB_WORKSPACE)
-		log.Println("home", gh.HOME)
-		log.Println("ls .")
-		utils.ListFolderContent(".")
-		log.Println("ls ..")
-		utils.ListFolderContent("..")
-		log.Println("ls /")
-		utils.ListFolderContent("/")
-
-		err = gh.SetOutput("time", time.Now().Format("15:04:05"))
-		if err != nil {
-			log.Fatal(err)
-		}
-		err = gh.SetOutput("arg", args[0])
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
 
 	// TODO: nmap must move to its own package
 	// nmap section
