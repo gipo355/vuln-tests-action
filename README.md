@@ -70,3 +70,15 @@ nmap formatter already available
 # CREDITS
 
 thank you @vdjagilev for the nmap formatter lib
+
+# note
+
+requires `--network=host` to run nmap in docker
+
+also needs a volume mounted to $workdir to extract reports
+
+set workdir with `--workdir` flag
+
+by default it will emit them in $workdir/$report-dir/$report-name/$report-name.ext
+
+changing the workdir will change the location of the reports
