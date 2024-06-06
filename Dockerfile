@@ -1,7 +1,8 @@
 ARG EXECUTABLE="vuln-tests-action"
 
 # BASE IMAGE
-FROM golang:1.22.4-bookworm as BUILDER
+# FROM golang:1.22.4-bookworm as BUILDER
+FROM golang:1.22.4-alpine3.20 as BUILDER
 
 ARG EXECUTABLE
 ENV PROJECT=${EXECUTABLE}
@@ -12,12 +13,6 @@ RUN mkdir -p /$PROJECT
 # TODO: fork repos to pin
 
 # https://securitytrails.com/blog/nmap-vulnerability-scan
-RUN git clone https://github.com/scipag/vulscan.git /scipag_vulscan
-RUN rm -rf /usr/share/nmap/scripts/vulscan/.git
-
-# RUN cd /usr/share/nmap/scripts/
-RUN git clone https://github.com/vulnersCom/nmap-vulners.git /nmap-vulners
-RUN rm -rf /usr/share/nmap/scripts/nmap-vulners/.git
 
 COPY . /$PROJECT
 
@@ -27,19 +22,27 @@ WORKDIR /$PROJECT
 
 RUN go mod download && go mod verify
 
-RUN go build -v -o /$PROJECT/bin/$PROJECT
+RUN go build -v -o /$PROJECT/bin/$PROJECT cmd/cli/main.go
 
 # MULTI-STAGE BUILD
 FROM alpine:3.20
 
-ARG EXECUTABLE
+ARG EXECUTABLE="vuln-tests-action"
 ENV PROJECT=${EXECUTABLE}
 
 # add nmap
-RUN apk update && apk add nmap && rm -rf /var/cache/apk/*
+# https://stackoverflow.com/questions/56446898/nmap-could-not-locate-nse-main-lua
+RUN apk update && apk add nmap nmap-scripts git && rm -rf /var/cache/apk/*
 
-COPY --from=BUILDER /${PROJECT}/${PROJECT} /usr/local/bin/${PROJECT}
-COPY --from=BUILDER /scipag_vulscan /usr/share/nmap/scripts/vulscan
-COPY --from=BUILDER /nmap-vulners /usr/share/nmap/scripts/nmap-vulners
+RUN git clone https://github.com/scipag/vulscan.git /usr/share/nmap/scripts/vulscan
+RUN rm -r /usr/share/nmap/scripts/vulscan/.git
+
+RUN git clone https://github.com/vulnersCom/nmap-vulners.git /usr/share/nmap/scripts/nmap-vulners
+RUN rm -r /usr/share/nmap/scripts/nmap-vulners/.git
+
+# note, we don't set workdirs, github will do that on the checked out code
+RUN mkdir -p /app
+
+COPY --from=BUILDER /${PROJECT}/bin/${PROJECT} /usr/local/bin/${PROJECT}
 
 ENTRYPOINT ["sh", "-c", "\"$PROJECT\" \"$@\"", "--"]

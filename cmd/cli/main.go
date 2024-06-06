@@ -12,6 +12,9 @@ import (
 	"github.com/gipo355/vuln-tests-action/pkg/utils"
 )
 
+// we want to run something like
+// docker run gipo355/happy-nuker:latest --vulner --vulscan --target 127.0.0.1 --port 3000 --args "-sP"
+// where we get the input from the action.yml file
 func main() {
 	// get args
 	// args are used to pass input to the golang cli program, not to nmap
@@ -67,6 +70,7 @@ func main() {
 	n, err := nmap.NewNmapClient(
 		&nmap.Config{
 			Target:        "localhost",
+			Port:          "80",
 			WriteToFile:   true,
 			GenerateSarif: true,
 			OutputDir:     "nmap-reports",
