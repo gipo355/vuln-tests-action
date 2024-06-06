@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/gipo355/vuln-tests-action/pkg/utils"
+	"github.com/gipo355/vuln-docker-scanners/pkg/utils"
 )
 
 // GetInputEnv returns the value of the input env var, requires "UPPER-VAR".

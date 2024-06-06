@@ -1,4 +1,4 @@
-module github.com/gipo355/vuln-tests-action
+module github.com/gipo355/vuln-docker-scanners
 
 go 1.22.3
 

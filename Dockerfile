@@ -27,7 +27,7 @@ RUN go build -v -o /$PROJECT/bin/$PROJECT cmd/cli/main.go
 # MULTI-STAGE BUILD
 FROM alpine:3.20
 
-ARG EXECUTABLE="vuln-tests-action"
+ARG EXECUTABLE="vuln-docker-scanners"
 ENV PROJECT=${EXECUTABLE}
 
 # add nmap

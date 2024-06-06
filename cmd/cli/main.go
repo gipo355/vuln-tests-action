@@ -7,9 +7,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gipo355/vuln-tests-action/pkg/github"
-	"github.com/gipo355/vuln-tests-action/pkg/nmap"
-	"github.com/gipo355/vuln-tests-action/pkg/utils"
+	"github.com/gipo355/vuln-docker-scanners/pkg/github"
+	"github.com/gipo355/vuln-docker-scanners/pkg/nmap"
+	"github.com/gipo355/vuln-docker-scanners/pkg/utils"
 )
 
 // we want to run something like
