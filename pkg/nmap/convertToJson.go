@@ -14,7 +14,7 @@ import (
 // Can be either "vulscan", "direct", or "vulners".
 func (n *Client) ConvertToJSON(name ReportName) error {
 	mainDir := n.Config.OutputDir
-	fileName := mainDir + "/" + string(name) + "/" + string(name) + "-report.xml"
+	fileInput := mainDir + "/" + string(name) + "/" + string(name) + "-report.xml"
 	fileOutput := mainDir + "/" + string(name) + "/" + string(name) + "-report.json"
 
 	var nmap formatter.NMAPRun
@@ -22,7 +22,7 @@ func (n *Client) ConvertToJSON(name ReportName) error {
 	var config formatter.Config = formatter.Config{}
 
 	// Read XML file that was produced by nmap (with -oX option)
-	content, err := os.ReadFile(fileName)
+	content, err := os.ReadFile(fileInput)
 	if err != nil {
 		panic(err)
 	}

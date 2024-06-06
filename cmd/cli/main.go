@@ -21,8 +21,6 @@ func main() {
 	if len(args) == 0 {
 		log.Printf("No args provided")
 	} else {
-		// utils.PrintHello(args[0])
-
 		for _, arg := range args {
 			log.Printf("arg: %v", arg)
 		}

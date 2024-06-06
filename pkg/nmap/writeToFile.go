@@ -33,7 +33,7 @@ func (n *Client) writeToFile(userArgs []string, dirName string, report ReportNam
 		return fmt.Errorf("error creating directory: %w", err)
 	}
 
-	openFile, fileErr := os.Create(mainDir + "/" + dirName + "/nmap-output.log")
+	openFile, fileErr := os.Create(mainDir + "/" + dirName + "/" + string(report) + "-output.log")
 	if fileErr != nil {
 		return fmt.Errorf("error creating file: %w", fileErr)
 	}

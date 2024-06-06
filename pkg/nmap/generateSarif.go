@@ -66,8 +66,8 @@ func (n *Client) GenerateSarif() error {
 
 func (n *Client) GenerateSarifReport(name ReportName) {
 	mainDir := n.Config.OutputDir
-	fileInput := mainDir + "/" + string(name) + "/nmap-report.json"
-	fileOutput := mainDir + "/" + string(name) + "/nmap-report.sarif"
+	fileInput := mainDir + "/" + string(name) + "/" + string(name) + "-report.json"
+	fileOutput := mainDir + "/" + string(name) + "/" + string(name) + "-report.sarif"
 
 	// Load the Nmap JSON report
 	nmapReportBytes, _ := os.ReadFile(fileInput)
