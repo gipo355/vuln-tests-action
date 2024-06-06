@@ -1,11 +1,6 @@
 package nmap
 
 import (
-	"fmt"
-	"log"
-	"os"
-	"os/exec"
-	"slices"
 	"sync"
 )
 
@@ -31,28 +26,12 @@ import (
 // }
 
 func (n *Client) DirectScan(nmapArgs []string, c chan<- error, wg *sync.WaitGroup) {
-	// defer close(c)
 	defer wg.Done()
 
-	target := n.Config.Target
-
-	args := slices.Concat(nmapArgs, []string{
-		target, // target
-	})
-
-	var err error
 	if n.Config.WriteToFile {
-		err = n.writeToFile(nmapArgs, "direct")
-	} else {
-		cmd := exec.Command("nmap", args...)
-		log.Printf("cmd: %v", cmd)
-
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-
-		err = fmt.Errorf("nmap: %w", cmd.Run())
+		c <- n.writeToFile(nmapArgs, "direct", Direct)
+		return
 	}
 
-	// Send the result back through the channel
-	c <- err
+	c <- n.writeToStdOut(nmapArgs)
 }

@@ -21,7 +21,7 @@ func main() {
 	if len(args) == 0 {
 		log.Printf("No args provided")
 	} else {
-		utils.PrintHello(args[0])
+		// utils.PrintHello(args[0])
 
 		for _, arg := range args {
 			log.Printf("arg: %v", arg)
@@ -70,7 +70,7 @@ func main() {
 		&nmap.Config{
 			Target:        "localhost",
 			WriteToFile:   true,
-			GenerateSarif: false,
+			GenerateSarif: true,
 			OutputDir:     "nmap-reports",
 		},
 	)
@@ -134,14 +134,15 @@ func main() {
 
 	// parsing nmap output
 
-	if cErr := n.ConverToJSON(nmap.Direct); cErr != nil {
-		log.Fatal(cErr)
-	}
-	if cErr := n.ConverToJSON(nmap.Vulners); cErr != nil {
+	if cErr := n.ConvertToJSON(nmap.Direct); cErr != nil {
 		log.Fatal(cErr)
 	}
 
-	if cErr := n.ConverToJSON(nmap.Vulscan); cErr != nil {
+	if cErr := n.ConvertToJSON(nmap.Vulners); cErr != nil {
+		log.Fatal(cErr)
+	}
+
+	if cErr := n.ConvertToJSON(nmap.Vulscan); cErr != nil {
 		log.Fatal(cErr)
 	}
 

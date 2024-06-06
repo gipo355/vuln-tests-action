@@ -11,13 +11,13 @@ import (
 )
 
 // writeToFile writes the nmap output to a file in the reports directory
-func (n *Client) writeToFile(userArgs []string, dirName string) error {
+func (n *Client) writeToFile(userArgs []string, dirName string, report ReportName) error {
 	target := n.Config.Target
 
 	mainDir := n.Config.OutputDir
 
 	// TODO: don't hardcode the directory name and the file name
-	fileName := "nmap-report"
+	fileName := string(report) + "-report"
 
 	args := slices.Concat(userArgs, []string{
 		"-oA",                                    // output all formats

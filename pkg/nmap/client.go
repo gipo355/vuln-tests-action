@@ -1,6 +1,7 @@
 package nmap
 
 import (
+	"fmt"
 	"log"
 	"os/exec"
 )
@@ -10,9 +11,9 @@ type Client struct {
 }
 
 func NewNmapClient(c *Config) (*Client, error) {
-	path, err := exec.LookPath("ls")
+	path, err := exec.LookPath("nmap")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("nmap not found: %w", err)
 	}
 
 	log.Println(path) // bin/ls

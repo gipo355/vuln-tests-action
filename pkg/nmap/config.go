@@ -2,9 +2,9 @@ package nmap
 
 type Config struct {
 	Target        string
+	OutputDir     string
 	WriteToFile   bool
 	GenerateSarif bool
-	OutputDir     string
 }
 
 func NewConfig(target string, writeToFile, sarif bool, outputDir string) *Config {

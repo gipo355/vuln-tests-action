@@ -1,138 +1,222 @@
 package nmap
 
 import (
-	"encoding/xml"
-	"fmt"
+	"encoding/json"
 	"log"
 	"os"
-
-	"github.com/vdjagilev/nmap-formatter/v3/formatter"
 )
+
+type NmapReport struct {
+	Version string `json:"Version"`
+	Host    []struct {
+		Port []struct {
+			Protocol string `json:"Protocol"`
+			PortID   int    `json:"PortID"`
+			Service  struct {
+				Name    string `json:"Name"`
+				Product string `json:"Product"`
+				Version string `json:"Version"`
+			} `json:"Service"`
+		} `json:"Port"`
+		HostAddress []struct {
+			Address string `json:"Address"`
+		} `json:"HostAddress"`
+	} `json:"Host"`
+}
+
+type SarifReport struct {
+	Schema  string `json:"$schema"`
+	Version string `json:"version"`
+	Runs    []struct {
+		Tool struct {
+			Driver struct {
+				Name    string `json:"name"`
+				Version string `json:"version"`
+				Rules   []struct {
+					ID              string `json:"id"`
+					Name            string `json:"name"`
+					FullDescription struct {
+						Text string `json:"text"`
+					} `json:"fullDescription"`
+					HelpURI string `json:"helpUri"`
+				} `json:"rules"`
+			} `json:"driver"`
+		} `json:"tool"`
+		Results []struct {
+			RuleID  string `json:"ruleId"`
+			Level   string `json:"level"`
+			Message struct {
+				Text string `json:"text"`
+			} `json:"message"`
+			Locations []struct {
+				PhysicalLocation struct {
+					Address struct {
+						AbsoluteAddress string `json:"absoluteAddress"`
+					} `json:"address"`
+				} `json:"physicalLocation"`
+			} `json:"locations"`
+		} `json:"results"`
+	} `json:"runs"`
+}
 
 // GenerateSarif generates a SARIF report from the nmap output xml.
 func (n *Client) GenerateSarif() error {
-	// err := n.WriteToFile()
-	// if err != nil {
-	// 	return err
-	// }
-
-	// parse reports/nmap-report.xml
-
-	// convert to sarif
-
 	return nil
 }
 
-func ConvertNmapXMLToSarif() error {
-	// open reports/nmap-report.xml
-	// file, err := os.Open("reports/nmap-report.xml")
-	// if err != nil {
-	// 	return err
-	// }
-	// defer file.Close()
-
-	// parse reports/nmap-report.xml
-
-	// convert to sarif
-	return nil
-}
-
-// try parsing nmap-reports/vulscan/nmap-report.xml
-// func (n *Client) ReadXML(scan string) error {
-// 	outdir := n.Config.OutputDir
-// 	var filePath string
-// 	if scan == "vulscan" {
-// 		filePath = fmt.Sprintf("%s/nmap-reports/vulscan/nmap-report.xml", outdir)
-// 	}
-// 	if scan == "direct" {
-// 		filePath = fmt.Sprintf("%s/vulners/nmap-report.xml", outdir)
-// 	}
-// 	if scan == "vulners" {
-// 		filePath = fmt.Sprintf("%s/vulners/nmap-report.xml", outdir)
-// 	}
-//
-// 	file, err := os.Open(filePath)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	defer file.Close()
-//
-// 	reader := bufio.NewReader(file)
-//
-// 	// parse reports/nmap-report.xml using xml.Decoder
-// 	decoder := xml.NewDecoder(reader)
-//
-// 	return nil
-// }
-
-type ReportName string
-
-const (
-	Vulscan ReportName = "vulscan"
-	Direct  ReportName = "direct"
-	Vulners ReportName = "vulners"
-)
-
-// ConverToJSON converts the nmap xml report to json.
-// Specify the name of the report to convert.
-// Can be either "vulscan", "direct", or "vulners".
-func (n *Client) ConverToJSON(name ReportName) error {
+func (n *Client) GenerateSarifReport(name ReportName) {
 	mainDir := n.Config.OutputDir
-	fileName := mainDir + "/" + string(name) + "/nmap-report.xml"
-	fileOutput := mainDir + "/" + string(name) + "/nmap-report.json"
+	fileInput := mainDir + "/" + string(name) + "/nmap-report.json"
+	fileOutput := mainDir + "/" + string(name) + "/nmap-report.sarif"
 
-	var nmap formatter.NMAPRun
+	// Load the Nmap JSON report
+	nmapReportBytes, _ := os.ReadFile(fileInput)
+	var nmapReport NmapReport
+	json.Unmarshal(nmapReportBytes, &nmapReport)
 
-	var config formatter.Config = formatter.Config{}
-
-	// Read XML file that was produced by nmap (with -oX option)
-	content, err := os.ReadFile(fileName)
-	if err != nil {
-		panic(err)
+	// Initialize the SARIF report
+	sarifReport := SarifReport{
+		Schema:  "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+		Version: "2.1.0",
 	}
 
-	// Unmarshal XML and map structure(s) fields accordingly
-	if err = xml.Unmarshal(content, &nmap); err != nil {
-		return fmt.Errorf("failed to unmarshal xml: %w", err)
-	}
-
-	// Output data to console stdout
-	// You can use any other io.Writer implementation
-	// for example: os.OpenFile("file.json", os.O_CREATE|os.O_EXCL|os.O_WRONLY, os.ModePerm)
-	// config.Writer = os.Stdout
-	outputFile, err := os.Create(fileOutput)
-	if err != nil {
-		return fmt.Errorf("failed to create file: %w", err)
-	}
-	config.Writer = outputFile
-	// Formatting data to JSON, you can use:
-	// CSVOutput, MarkdownOutput, HTMLOutput as well
-	config.OutputFormat = formatter.JSONOutput
-
-	// Setting formatter data/options
-	templateData := formatter.TemplateData{
-		NMAPRun: nmap, // NMAP output data itself
-		OutputOptions: formatter.OutputOptions{
-			JSONOptions: formatter.JSONOutputOptions{
-				PrettyPrint: true, // Additional option to prettify JSON
+	// Convert each host in the Nmap report to a SARIF run
+	for _, host := range nmapReport.Host {
+		run := struct {
+			Tool struct {
+				Driver struct {
+					Name    string `json:"name"`
+					Version string `json:"version"`
+					Rules   []struct {
+						ID              string `json:"id"`
+						Name            string `json:"name"`
+						FullDescription struct {
+							Text string `json:"text"`
+						} `json:"fullDescription"`
+						HelpURI string `json:"helpUri"`
+					} `json:"rules"`
+				} `json:"driver"`
+			} `json:"tool"`
+			Results []struct {
+				RuleID  string `json:"ruleId"`
+				Level   string `json:"level"`
+				Message struct {
+					Text string `json:"text"`
+				} `json:"message"`
+				Locations []struct {
+					PhysicalLocation struct {
+						Address struct {
+							AbsoluteAddress string `json:"absoluteAddress"`
+						} `json:"address"`
+					} `json:"physicalLocation"`
+				} `json:"locations"`
+			} `json:"results"`
+		}{
+			Tool: struct {
+				Driver struct {
+					Name    string `json:"name"`
+					Version string `json:"version"`
+					Rules   []struct {
+						ID              string `json:"id"`
+						Name            string `json:"name"`
+						FullDescription struct {
+							Text string `json:"text"`
+						} `json:"fullDescription"`
+						HelpURI string `json:"helpUri"`
+					} `json:"rules"`
+				} `json:"driver"`
+			}{
+				Driver: struct {
+					Name    string `json:"name"`
+					Version string `json:"version"`
+					Rules   []struct {
+						ID              string `json:"id"`
+						Name            string `json:"name"`
+						FullDescription struct {
+							Text string `json:"text"`
+						} `json:"fullDescription"`
+						HelpURI string `json:"helpUri"`
+					} `json:"rules"`
+				}{
+					Name:    "Nmap",
+					Version: nmapReport.Version,
+				},
 			},
-		},
+		}
+
+		// Convert each port in the host to a SARIF rule and result
+		for _, port := range host.Port {
+			rule := struct {
+				ID              string `json:"id"`
+				Name            string `json:"name"`
+				FullDescription struct {
+					Text string `json:"text"`
+				} `json:"fullDescription"`
+				HelpURI string `json:"helpUri"`
+			}{
+				ID:   port.Protocol + "/" + string(port.PortID),
+				Name: port.Service.Name,
+				FullDescription: struct {
+					Text string `json:"text"`
+				}{
+					Text: port.Service.Product + " version " + port.Service.Version,
+				},
+				HelpURI: "https://nmap.org/book/man.html",
+			}
+			run.Tool.Driver.Rules = append(run.Tool.Driver.Rules, rule)
+
+			result := struct {
+				RuleID  string `json:"ruleId"`
+				Level   string `json:"level"`
+				Message struct {
+					Text string `json:"text"`
+				} `json:"message"`
+				Locations []struct {
+					PhysicalLocation struct {
+						Address struct {
+							AbsoluteAddress string `json:"absoluteAddress"`
+						} `json:"address"`
+					} `json:"physicalLocation"`
+				} `json:"locations"`
+			}{
+				RuleID: rule.ID,
+				Level:  "note",
+				Message: struct {
+					Text string `json:"text"`
+				}{
+					Text: "Port " + string(port.PortID) + " is open.",
+				},
+				Locations: []struct {
+					PhysicalLocation struct {
+						Address struct {
+							AbsoluteAddress string `json:"absoluteAddress"`
+						} `json:"address"`
+					} `json:"physicalLocation"`
+				}{
+					{
+						PhysicalLocation: struct {
+							Address struct {
+								AbsoluteAddress string `json:"absoluteAddress"`
+							} `json:"address"`
+						}{
+							Address: struct {
+								AbsoluteAddress string `json:"absoluteAddress"`
+							}{
+								AbsoluteAddress: host.HostAddress[0].Address,
+							},
+						},
+					},
+				},
+			}
+			run.Results = append(run.Results, result)
+		}
+
+		sarifReport.Runs = append(sarifReport.Runs, run)
 	}
 
-	// New formatter instance
-	formatter := formatter.New(&config)
-	if formatter == nil {
-		// Not json/markdown/html/csv
-		return fmt.Errorf("wrong formatter provided")
-	}
+	// Save the SARIF report
+	sarifReportBytes, _ := json.MarshalIndent(sarifReport, "", "  ")
+	os.WriteFile(fileOutput, sarifReportBytes, 0o644)
 
-	// Attempt to format the data
-	if err = formatter.Format(&templateData, "" /* no template content for JSON */); err != nil {
-		// html template could not be parsed or some other issue occured
-		return fmt.Errorf("failed to format data: %w", err)
-	}
-
-	log.Printf("Successfully converted %s to JSON", name)
-
-	return nil
+	log.Printf("SARIF report saved to %s\n", fileOutput)
 }

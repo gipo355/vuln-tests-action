@@ -1,27 +1,22 @@
 package utils
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
 )
 
-func PrintHello(arg string) {
-	name := arg
-
-	log.Printf("Hello, %v!", name)
-}
-
 func AppendToFile(path, content string) error {
 	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0o644)
 	if err != nil {
-		return err
+		return fmt.Errorf("error opening file: %w", err)
 	}
 	defer file.Close()
 
 	_, err = file.WriteString(content)
 	if err != nil {
-		return err
+		return fmt.Errorf("error writing to file: %w", err)
 	}
 	return nil
 }
@@ -58,10 +53,13 @@ func PrintFileContent(path string) {
 		log.Fatal(err)
 	}
 
-	println(string(buf))
+	stringBuf := string(buf)
+
+	os.Stdout.WriteString(stringBuf)
 }
 
 func CommandExists(cmd string) bool {
 	_, err := exec.LookPath(cmd)
+
 	return err == nil
 }
