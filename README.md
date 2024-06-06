@@ -89,4 +89,4 @@ example:
 
 we encapsulate the nmap command to be able to extend this cli with more programs later on
 
-`docker run --network=host --workdir=/app --volume .:/app gipo355/happy-nuker nmap --vulner --vulscan --target=localhost --port=80 --generate-reports --generate-sarif`
+`docker run --network=host --workdir=/app --volume .:/app gipo355/vuln-docker-scanners nmap --vulner --vulscan --target=localhost --port=80 --generate-reports --generate-sarif`

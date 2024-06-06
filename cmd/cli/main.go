@@ -13,7 +13,7 @@ import (
 )
 
 // we want to run something like
-// docker run gipo355/happy-nuker:latest --vulner --vulscan --target 127.0.0.1 --port 3000 --args "-sP"
+// docker run gipo355/vuln-docker-scanners:latest --vulner --vulscan --target 127.0.0.1 --port 3000 --args "-sP"
 // where we get the input from the action.yml file
 //   args:
 // - "--target=${{ inputs.host }}"

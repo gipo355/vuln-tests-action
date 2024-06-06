@@ -41,7 +41,7 @@ inputs:
     default: "false"
 runs:
   using: "docker"
-  image: "docker://gipo355/happy-nuker:latest"
+  image: "docker://gipo355/vuln-docker-scanners:latest"
   args:
     - "--target=${{ inputs.host }}"
     - "--port=${{ inputs.port }}"
