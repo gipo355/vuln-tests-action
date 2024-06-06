@@ -79,6 +79,14 @@ also needs a volume mounted to $workdir to extract reports
 
 set workdir with `--workdir` flag
 
+_note we don't set workdir by default to provide compatibility with github actions_
+
 by default it will emit them in $workdir/$report-dir/$report-name/$report-name.ext
 
 changing the workdir will change the location of the reports
+
+example:
+
+we encapsulate the nmap command to be able to extend this cli with more programs later on
+
+`docker run --network=host --workdir=/app --volume .:/app gipo355/happy-nuker nmap --vulner --vulscan --target=localhost --port=80 --generate-reports --generate-sarif`

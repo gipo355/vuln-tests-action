@@ -1,39 +1,53 @@
-name: "Nmap Action"
+name: "Happy Nuker Nmap Action"
 description: "Runs nmap on a target host"
 author: gipo355
 inputs:
   target:
     description: "Host to scan"
-    required: false
+    required: true
     default: "localhost"
-  generate-report:
+  port:
+    description: "Port to scan"
+    required: true
+    default: ""
+  generate-reports:
     description: "Generate a report"
     required: false
-    default: "false"
+    default: "true"
   generate-sarif:
     description: "Generate a SARIF report"
     required: false
-    default: "false"
+    default: "true"
+  reports-dir:
+    description: "Directory to store the reports"
+    required: false
+    default: "nmap-reports"
   # must be done separately
   # upload-report-to-code-scans:
   #   description: "Upload the report"
   #   required: false
   #   default: "false"
   nmap-arguments:
-    description: "Arguments to pass to nmap"
+    description: "Arguments to pass to nmap for the direct scan"
     required: false
     default: "-sP"
-  run-vulners:
-    description: "Use vulners script"
+  vulners:
+    description: "Use vulners scripts"
     required: false
     default: "false"
-  run-vulscan:
-    description: "Use vulscan script"
+  vulscan:
+    description: "Use vulscan scripts"
     required: false
     default: "false"
 runs:
   using: "docker"
-  image: "docker://gipo355/nmap-go-wrapper:latest"
+  image: "docker://gipo355/happy-nuker:latest"
   args:
-    - ${{ inputs.who-to-greet }}
-    - "--host ${{ inputs.host }}"
+    - "--target=${{ inputs.host }}"
+    - "--port=${{ inputs.port }}"
+    - "--generate-reports=${{ inputs.generate-reports }}"
+    - "--generate-sarif=${{ inputs.generate-sarif }}"
+    - "--nmap-arguments=${{ inputs.nmap-arguments }}"
+    - "--vulners=${{ inputs.vulners }}"
+    - "--vulscan=${{ inputs.vulscan }}"
+    - "--reports-dir=${{ inputs.reports-dir }}"
