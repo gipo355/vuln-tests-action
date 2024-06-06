@@ -89,6 +89,9 @@ func main() {
 		make(chan error),
 		make(chan error),
 	}
+	for range channels {
+		wg.Add(1)
+	}
 
 	// directChan := make(chan error)
 	go n.DirectScan(nmapArgs, channels[0], &wg)
@@ -129,15 +132,20 @@ func main() {
 
 	log.Println("nmap finished")
 
-	// BUG: doesn't wait for the goroutines to finish
-	if cErr := n.ConverToJSON("direct"); cErr != nil {
+	// parsing nmap output
+
+	if cErr := n.ConverToJSON(nmap.Direct); cErr != nil {
 		log.Fatal(cErr)
 	}
-	if cErr := n.ConverToJSON("vulners"); cErr != nil {
+	if cErr := n.ConverToJSON(nmap.Vulners); cErr != nil {
 		log.Fatal(cErr)
 	}
 
-	if cErr := n.ConverToJSON("vulscan"); cErr != nil {
+	if cErr := n.ConverToJSON(nmap.Vulscan); cErr != nil {
 		log.Fatal(cErr)
 	}
+
+	n.GenerateSarifReport(nmap.Vulners)
+	n.GenerateSarifReport(nmap.Direct)
+	n.GenerateSarifReport(nmap.Vulscan)
 }

@@ -32,7 +32,6 @@ import (
 
 func (n *Client) DirectScan(nmapArgs []string, c chan<- error, wg *sync.WaitGroup) {
 	// defer close(c)
-	wg.Add(1)
 	defer wg.Done()
 
 	target := n.Config.Target

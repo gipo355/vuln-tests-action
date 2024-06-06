@@ -1,6 +1,6 @@
 package utils
 
-type Sarif struct {
+type SarifReport struct {
 	Version string `json:"version"`
 	Schema  string `json:"$schema"`
 	Runs    []Run  `json:"runs"`

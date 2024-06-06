@@ -13,7 +13,6 @@ import (
 
 func (n *Client) ScanWithVulners(c chan<- error, wg *sync.WaitGroup) {
 	// defer close(c)
-	wg.Add(1)
 	defer wg.Done()
 
 	target := n.Config.Target

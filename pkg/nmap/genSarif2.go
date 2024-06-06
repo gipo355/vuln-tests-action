@@ -2,7 +2,8 @@ package nmap
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"log"
+	"os"
 )
 
 type NmapReport struct {
@@ -58,9 +59,13 @@ type SarifReport struct {
 	} `json:"runs"`
 }
 
-func main() {
+func (n *Client) GenerateSarifReport(name ReportName) {
+	mainDir := n.Config.OutputDir
+	fileInput := mainDir + "/" + string(name) + "/nmap-report.json"
+	fileOutput := mainDir + "/" + string(name) + "/nmap-report.sarif"
+
 	// Load the Nmap JSON report
-	nmapReportBytes, _ := ioutil.ReadFile("nmap-report.json")
+	nmapReportBytes, _ := os.ReadFile(fileInput)
 	var nmapReport NmapReport
 	json.Unmarshal(nmapReportBytes, &nmapReport)
 
@@ -206,5 +211,7 @@ func main() {
 
 	// Save the SARIF report
 	sarifReportBytes, _ := json.MarshalIndent(sarifReport, "", "  ")
-	ioutil.WriteFile("nmap-report.sarif", sarifReportBytes, 0o644)
+	os.WriteFile(fileOutput, sarifReportBytes, 0o644)
+
+	log.Printf("SARIF report saved to %s\n", fileOutput)
 }

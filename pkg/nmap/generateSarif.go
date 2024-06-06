@@ -3,6 +3,7 @@ package nmap
 import (
 	"encoding/xml"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/vdjagilev/nmap-formatter/v3/formatter"
@@ -64,12 +65,21 @@ func ConvertNmapXMLToSarif() error {
 // 	return nil
 // }
 
+type ReportName string
+
+const (
+	Vulscan ReportName = "vulscan"
+	Direct  ReportName = "direct"
+	Vulners ReportName = "vulners"
+)
+
 // ConverToJSON converts the nmap xml report to json.
 // Specify the name of the report to convert.
 // Can be either "vulscan", "direct", or "vulners".
-func (n *Client) ConverToJSON(name string) error {
-	fileName := "nmap-reports/" + name + "/nmap-report.xml"
-	fileOutput := "nmap-reports/" + name + "/nmap-report.json"
+func (n *Client) ConverToJSON(name ReportName) error {
+	mainDir := n.Config.OutputDir
+	fileName := mainDir + "/" + string(name) + "/nmap-report.xml"
+	fileOutput := mainDir + "/" + string(name) + "/nmap-report.json"
 
 	var nmap formatter.NMAPRun
 
@@ -121,6 +131,8 @@ func (n *Client) ConverToJSON(name string) error {
 		// html template could not be parsed or some other issue occured
 		return fmt.Errorf("failed to format data: %w", err)
 	}
+
+	log.Printf("Successfully converted %s to JSON", name)
 
 	return nil
 }
