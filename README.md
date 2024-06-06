@@ -1,3 +1,9 @@
+# dev moving to
+
+vuln-docker-scanners for the cli
+
+vuln-docker-scanners-$tool-action for the github action
+
 # Hello world docker action with go
 
 This action prints "Hello World" or "Hello" + the name of a person to greet to the log.
