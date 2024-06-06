@@ -26,6 +26,12 @@ import (
 // - "--reports-dir=${{ inputs.reports-dir }}"
 
 func main() {
+	// NOTE:
+	// how to split docker from github action
+	// github action provides arguments to the docker container and env vars
+	// should i make the docker container to be a cli program independent from github?
+	// should i import the library and use it in the github action to create an independent Dockerfile?
+
 	// get args
 	// args are used to pass input to the golang cli program, not to nmap
 	// we will use env vars to pass input to nmap or possibly args with --flag like --host=localhost

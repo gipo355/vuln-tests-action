@@ -1,4 +1,4 @@
-name: "Happy Nuker Nmap Action"
+name: "Vuln Scanners Nmap Action"
 description: "Runs nmap on a target host"
 author: gipo355
 inputs:
@@ -43,6 +43,7 @@ runs:
   using: "docker"
   image: "docker://gipo355/vuln-docker-scanners:latest"
   args:
+    - "nmap"
     - "--target=${{ inputs.host }}"
     - "--port=${{ inputs.port }}"
     - "--generate-reports=${{ inputs.generate-reports }}"
