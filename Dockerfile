@@ -1,4 +1,4 @@
-ARG EXECUTABLE="vuln-tests-action"
+ARG EXECUTABLE="vuln-docker-scanners"
 
 # BASE IMAGE
 # FROM golang:1.22.4-bookworm as BUILDER
@@ -41,6 +41,7 @@ RUN git clone https://github.com/vulnersCom/nmap-vulners.git /usr/share/nmap/scr
 RUN rm -r /usr/share/nmap/scripts/nmap-vulners/.git
 
 # note, we don't set workdirs, github will do that on the checked out code
+# we just create the directory to be able to mount anything here
 RUN mkdir -p /app
 
 COPY --from=BUILDER /${PROJECT}/bin/${PROJECT} /usr/local/bin/${PROJECT}
