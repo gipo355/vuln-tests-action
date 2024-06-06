@@ -46,26 +46,22 @@ tasks:
       - generate
     cmds:
       # - go build -o ./bin/api ./cmd/api/...
-      - go build -o=../../dist/apps/example-go-app/ ./cmd/server
+      - go build -o=../../dist/apps/example-go-app/ ./cmd/cli
   docker-build:
     desc: Build the docker image
-    deps:
-      - build
     cmds:
       - docker buildx build -t gipo355/happy-nuker -f Dockerfile . --load
   docker-push:
     desc: Push the docker image
-    deps:
-      - docker-build
     cmds:
-      - docker buildx build -t halamert/happy-nuker -f Dockerfile . --push
+      - docker buildx build -t gipo355/happy-nuker -f Dockerfile . --push
   preview:
     desc: Build and serve the api
     deps:
       - build
     cmds:
       # - ./bin/api
-      - ../../dist/apps/example-go-app/server
+      - ../../dist/apps/example-go-app/cli
   fix:
     desc: Fix the code
     cmds:
